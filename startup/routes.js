@@ -5,6 +5,7 @@ const ApiError = require('../helpers/apiError')
 const globalErrorHandler = require('../middleware/globalErrorHandler')
 
 const example = require('../routes/example')
+const reservations = require('../routes/reservations')
 
 const limit = rateLimit({
   max: 100,
@@ -17,6 +18,7 @@ module.exports = function (app) {
 
   app.use('/api', limit)
   app.use('/api/v1/users', example)
+  app.use('/api/reservations', reservations)
 
   app.use('*', (req, res, next) => {
     next(new ApiError(404, 'Route is not supported.'), req, res, next)
