@@ -3,62 +3,39 @@ const express = require('express')
 const { Hotel } = require('../models/hotel')
 const router = express.Router()
 
-router.get('/', (req, res) => {
-  Hotel.find()
-    .limit(req.params.limit)
-    .exec()
-    .then((hotel) => {
-      if (!hotel) {
-        res.status(404).json({ message: 'No hotels in database' })
-      }
-      res.status(200).json({ hotel: hotel })
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err })
-    })
+router.get('/', async (req, res) => {
+  const hotel = await new Hotel.find()
+
+  res.status(200).send(hotel)
 })
 
-router.get('/:limit', (req, res) => {
-  Hotel.find()
-    .limit(req.params.limit)
-    .exec()
-    .then((hotel) => {
-      if (!hotel) {
-        res.status(404).json({ message: 'No hotels in database' })
-      }
-      res.status(200).json({ hotel: hotel })
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err })
-    })
+router.get('/:limit', async (req, res) => {
+  const limit = req.params.limit
+  const hotel = await new Hotel.find().limit(limit)
+
+  res.status(200).send(hotel)
 })
 
-router.get('/hotel/:hotelId', (req, res) => {
-  Hotel.findById(req.params.hotelId)
-    .exec()
-    .then((hotel) => {
-      if (!hotel) {
-        res.status(404).json({ message: 'Hotel not found' })
-      }
-      res.status(200).json({ hotel: hotel })
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err })
-    })
+router.get('/hotel/:hotelId', async (req, res) => {
+  const id = req.params.hotelId
+  const hotel = await Hotel.findById(id)
+
+  if (!hotel) {
+    return res.status(404).send('Hotel with provided ID not found')
+  }
+
+  res.status(200).send(hotel)
 })
 
-router.get('/city/:city', (req, res) => {
-  Hotel.find()
-    .where('localization.city', req.params.city)
-    .then((hotel) => {
-      if (!hotel) {
-        res.status(404).json({ message: 'Hotels not found' })
-      }
-      res.status(200).json({ hotel: hotel })
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err })
-    })
+router.get('/city/:city', async (req, res) => {
+  const city = req.params.city
+  const hotel = await Hotel.find().where('localization.city', city)
+
+  if (!hotel) {
+    return res.status(404).send(`There's no hotels in city '${city}'`)
+  }
+
+  res.status(200).send(hotel)
 })
 
 module.exports = router
