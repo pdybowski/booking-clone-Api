@@ -52,9 +52,9 @@ const Reservation = mongoose.model('Reservation', reservationSchema)
 
 const validateReservation = (reservation) => {
   const schema = Joi.object({
-    userId: Joi.required(),
-    hotelId: Joi.required(),
-    roomId: Joi.required(),
+    userId: Joi.ObjectId().required(),
+    hotelId: Joi.ObjectId().required(),
+    roomId: Joi.ObjectId().required(),
     startDate: Joi.date().required(),
     endDate: Joi.date().required(),
     people: Joi.object({
