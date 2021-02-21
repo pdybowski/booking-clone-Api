@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const express = require('express')
-const { Reservation, validate } = require('../schemas/reservationSchema')
+const { Reservation, validate } = require('../models/reservation')
 const router = express.Router()
 
 // TODO: add auth middlewear, when it will be ready
