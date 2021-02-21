@@ -1,3 +1,4 @@
+const { object } = require('joi')
 const Joi = require('joi')
 const mongoose = require('mongoose')
 Joi.objectId = require('joi-objectid')(Joi)
@@ -28,18 +29,17 @@ const reservationSchema = new mongoose.Schema(
       required: true,
     },
     people: {
-      type: new mongoose.Schema({
-        adults: {
-          type: Number,
-          required: true,
-          min: 1,
-        },
-        children: {
-          type: Number,
-          required: true,
-          min: 0,
-        },
-      }),
+      type: Object,
+      adults: {
+        type: Number,
+        required: true,
+        min: 1,
+      },
+      children: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
       required: true,
     },
     isPaid: {
