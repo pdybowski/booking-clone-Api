@@ -4,16 +4,16 @@ const { Hotel } = require('../models/hotel')
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-  const hotel = await new Hotel.find()
+  const hotels = await Hotel.find()
 
-  res.status(200).send(hotel)
+  res.status(200).send(hotels)
 })
 
 router.get('/:limit', async (req, res) => {
   const limit = req.params.limit
-  const hotel = await new Hotel.find().limit(limit)
+  const hotels = await Hotel.find().limit(limit)
 
-  res.status(200).send(hotel)
+  res.status(200).send(hotels)
 })
 
 router.get('/hotel/:hotelId', async (req, res) => {
@@ -29,11 +29,7 @@ router.get('/hotel/:hotelId', async (req, res) => {
 
 router.get('/city/:city', async (req, res) => {
   const city = req.params.city
-  const hotel = await Hotel.find().where('localization.city', city)
-
-  if (!hotel) {
-    return res.status(404).send(`There's no hotels in city '${city}'`)
-  }
+  const hotel = await Hotel.find({ localization: { city: city } })
 
   res.status(200).send(hotel)
 })
