@@ -59,9 +59,10 @@ const validateReservation = (reservation) => {
     roomId: Joi.objectId().required(),
     startDate: Joi.date().required(),
     endDate: Joi.date().required(),
-
-    children: Joi.number().min(0).required(),
-    adults: Joi.number().min(1).required(),
+    people: {
+      children: Joi.number().min(0).required(),
+      adults: Joi.number().min(1).required(),
+    },
   })
 
   return schema.validate(reservation)

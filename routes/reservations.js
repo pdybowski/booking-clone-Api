@@ -21,8 +21,10 @@ router.post('/', async (req, res) => {
     roomId: req.body.roomId,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
-    adults: req.body.adults,
-    children: req.body.children,
+    people: {
+      adults: req.body.people.adults,
+      children: req.body.people.children,
+    },
   })
 
   await reservation.save()
