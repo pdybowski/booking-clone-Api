@@ -21,13 +21,11 @@ router.post('/', async (req, res) => {
     roomId: req.body.roomId,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
-    people: {
-      adults: req.body.adults,
-      children: req.body.children,
-    },
+    adults: req.body.adults,
+    children: req.body.children,
   })
 
-  reservation = await reservation.save()
+  await reservation.save()
 
   res.send(reservation)
 })
@@ -36,7 +34,7 @@ router.put('/payment/:id', async (req, res) => {
   const reservation = await Reservation.findByIdAndUpdate(
     req.params.id,
     {
-      isPaid: req.body.isPaid,
+      isPaid: true,
     },
     { new: true }
   )
