@@ -47,4 +47,15 @@ router.put('/payment/:id', async (req, res) => {
   res.send(reservation)
 })
 
+router.delete('/:id', async (req, res) => {
+  const reservation = await Reservation.findByIdAndRemove(req.params.id)
+
+  if (!reservation)
+    return res
+      .status(404)
+      .send('The reservation with the given ID was not found.')
+
+  res.send(reservation)
+})
+
 module.exports = router
