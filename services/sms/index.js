@@ -5,7 +5,7 @@ const nexmo = new Nexmo({
     apiSecret: 'nD9CM2Hf3qjvzVZE',
   });
 
-const sendSms = (from, number, text) => {
+const smsSend = (from, number, text) => {
     nexmo.message.sendSms(from, number, text)
 }
 

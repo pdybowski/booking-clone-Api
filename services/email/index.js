@@ -1,36 +1,30 @@
 const nodemailer = require('nodemailer')
-const hbs = require('nodemailer-express-handlebars')
+const handlebars = require('handlebars')
+const fs = require('fs')
+const path = require('path')
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'bookingcloneapi@gmail.com',
-    pass: 'BOOKINGcloneAPI',
-  },
-})
-
-const options = {
-  viewEngine: {
-    layoutsDir: __dirname + '/views',
-    extname: '.hbs',
-  },
-  extName: '.hbs',
-  viewPath: 'services/email/views',
-}
-
-transporter.use('compile', hbs(options))
-
-const emailSend = (to, subject, template) => {
-  const mailOptions = {
-    from: 'bookingcloneapi@gmail.com',
-    to: to,
-    subject: subject,
-    template: template,
-    context: {
-      username: 'testUser',
-    },
+function emailSend(email, subject, view, username, hotel) {
+  const filePath = path.join(__dirname, `./views/${view}.html`)
+  const source = fs.readFileSync(filePath, 'utf-8').toString()
+  const template = handlebars.compile(source)
+  const replacements = {
+    username: username,
+    hotel: hotel
   }
-
+  const htmlToSend = template(replacements)
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'bookingcloneapi@gmail.com',
+      pass: 'BOOKINGcloneAPI',
+    },
+  })
+  const mailOptions = {
+    from: '"Booking Clone API" <bookingcloneapi@gmail.com>',
+    to: email,
+    subject: subject,
+    html: htmlToSend,
+  }
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error)
