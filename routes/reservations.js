@@ -13,19 +13,9 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { error } = validate(req.body)
-  if (error) return res.status(400).send(error.details[0].message)
+  if (error) return res.status(400).json({ message: error.details[0].message })
 
-  let reservation = new Reservation({
-    userId: req.body.userId,
-    hotelId: req.body.hotelId,
-    roomId: req.body.roomId,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
-    people: {
-      adults: req.body.people.adults,
-      children: req.body.people.children,
-    },
-  })
+  let reservation = new Reservation(req.body)
 
   await reservation.save()
 
@@ -42,7 +32,9 @@ router.put('/payment/:id', async (req, res) => {
   )
 
   if (!reservation)
-    return res.status(404).send('Reservation with the gived ID was not found.')
+    return res
+      .status(404)
+      .json({ messaage: 'Reservation with the gived ID was not found.' })
 
   res.send(reservation)
 })
