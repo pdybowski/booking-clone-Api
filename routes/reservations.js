@@ -23,20 +23,21 @@ router.post('/', async (req, res) => {
 })
 
 router.put('/payment/:id', async (req, res) => {
-  const reservation = await Reservation.findByIdAndUpdate(
-    req.params.id,
-    {
-      isPaid: true,
-    },
-    { new: true }
-  )
+  try {
+    const reservation = await Reservation.findByIdAndUpdate(
+      req.params.id,
+      {
+        isPaid: true,
+      },
+      { new: true }
+    )
 
-  if (!reservation)
+    res.send(reservation)
+  } catch {
     return res
       .status(404)
       .json({ messaage: 'Reservation with the gived ID was not found.' })
-
-  res.send(reservation)
+  }
 })
 
 module.exports = router
