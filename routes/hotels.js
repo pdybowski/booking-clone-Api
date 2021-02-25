@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const express = require('express')
 const { Hotel } = require('../models/hotel')
+const ApiError = require('../helpers/apiError')
 const router = express.Router()
 
 router.get('/', async (req, res) => {
@@ -21,7 +22,7 @@ router.get('/hotel/:hotelId', async (req, res) => {
   const hotel = await Hotel.findById(id)
 
   if (!hotel) {
-    return res.status(404).send('Hotel with provided ID not found')
+    throw new ApiError(404, 'Hotel with provided ID not found')
   }
 
   res.status(200).send(hotel)

@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const express = require('express')
 const { Hotel, validate } = require('../models/hotel')
 const { Reservation } = require('../models/reservation')
+const ApiError = require('../helpers/apiError')
 const router = express.Router()
 
 // TODO: add auth middlewear, when it will be ready
@@ -14,7 +15,7 @@ router.get('/hotels', async (req, res) => {
 
 router.post('/hotel', async (req, res) => {
   const { error } = validate(req.body)
-  if (error) return res.status(400).send(error.details[0].message)
+  if (error) throw new ApiError(400, error.details[0].message)
 
   const hotel = new Hotel(req.body)
 
@@ -25,14 +26,14 @@ router.post('/hotel', async (req, res) => {
 
 router.put('/hotel/:id', async (req, res) => {
   const { error } = validate(req.body)
-  if (error) return res.status(400).send(error.details[0].message)
+  if (error) throw new ApiError(400, error.details[0].message)
   try {
     const hotel = await Hotel.findByIdAndUpdate(req.params.id, req.body)
 
     res.status(200).send(hotel)
   } catch (err) {
     console.log(err)
-    res.status(500).send('Something went wrong')
+    throw new ApiError(500, 'Something went wrong')
   }
 })
 
@@ -44,9 +45,10 @@ router.delete('/hotel/:id&:force', async (req, res) => {
     const reservation = await Reservation.find({ hotelId: id })
 
     if (reservation.length > 0 && force === 'false')
-      return res
-        .status(400)
-        .send('Remove reservations first or set flag force to true, please')
+      throw new ApiError(
+        400,
+        'Remove reservations first or set flag force to true, please'
+      )
 
     if (reservation.length > 0 && force === 'true') {
       await Reservation.deleteMany({ hotelId: id })
@@ -59,7 +61,7 @@ router.delete('/hotel/:id&:force', async (req, res) => {
     res.status(200).send({ message: `Hotel ${message}deleted`, hotels: hotels })
   } catch (err) {
     console.log(err)
-    res.status(500).send('Something went wrong')
+    throw new ApiError(500, 'Something went wrong')
   }
 })
 
@@ -68,7 +70,7 @@ router.delete('/reservation/:id', async (req, res) => {
   try {
     const reservation = await Reservation.findByIdAndDelete(id)
     if (!reservation) {
-      return res.status(404).send('Reservation with given ID was not found')
+      throw new ApiError(404, 'Reservation with given ID was not found')
     }
 
     const startDate = new Date(reservation.startDate)
@@ -79,17 +81,16 @@ router.delete('/reservation/:id', async (req, res) => {
     const days = Math.floor(msBetween / msPerDay)
 
     if (reservation.isPaid || days <= 3) {
-      return res
-        .status(400)
-        .send(
-          'Can not delete reservation; reservation is paid or or there is less than 3 days to start the stay in the hotel'
-        )
+      throw new ApiError(
+        400,
+        'Can not delete reservation; reservation is paid or or there is less than 3 days to start the stay in the hotel'
+      )
     }
 
     res.status(200).send('Reservation deleted')
   } catch (err) {
     console.log(err)
-    res.status(500).send('Something went wrong')
+    throw new ApiError(500, 'Something went wrong')
   }
 })
 
