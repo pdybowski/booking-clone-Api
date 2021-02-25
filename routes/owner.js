@@ -4,16 +4,15 @@ const { Hotel, validate } = require('../models/hotel')
 const { Reservation } = require('../models/reservation')
 const ApiError = require('../helpers/apiError')
 const router = express.Router()
+const { isHotelOwner } = require('../middleware/role')
 
-// TODO: add auth middlewear, when it will be ready
+router.get('/hotels', isHotelOwner, async (req, res) => {
+  const hotels = await Hotel.find()
 
-router.get('/hotels', async (req, res) => {
-  const hotel = await Hotel.find()
-
-  res.status(200).send(hotel)
+  res.status(200).json({ hotels: hotels })
 })
 
-router.post('/hotel', async (req, res) => {
+router.post('/hotel', isHotelOwner, async (req, res) => {
   const { error } = validate(req.body)
   if (error) throw new ApiError(400, error.details[0].message)
 
@@ -21,51 +20,55 @@ router.post('/hotel', async (req, res) => {
 
   await hotel.save()
 
-  res.status(200).send(hotel)
+  res.status(200).json({ hotel: hotel })
 })
 
-router.put('/hotel/:id', async (req, res) => {
+router.put('/hotel/:id', isHotelOwner, async (req, res) => {
   const { error } = validate(req.body)
   if (error) throw new ApiError(400, error.details[0].message)
   try {
     const hotel = await Hotel.findByIdAndUpdate(req.params.id, req.body)
 
-    res.status(200).send(hotel)
+    res.status(200).json({ hotel: hotel })
   } catch (err) {
     console.log(err)
     throw new ApiError(500, 'Something went wrong')
   }
 })
 
-router.delete('/hotel/:id&:force', async (req, res) => {
-  const id = req.params.id
-  const force = req.params.force
+router.delete('/hotel/:id', isHotelOwner, async (req, res) => {
+  const { id } = req.params
+  const { forceDelete } = req.query
+  const isForceDelete = forceDelete === 'true'
   let message = ''
   try {
     const reservation = await Reservation.find({ hotelId: id })
 
-    if (reservation.length > 0 && force === 'false')
+    if (reservation.length > 0 && isForceDelete) {
+      await Reservation.deleteMany({ hotelId: id })
+      message = 'and reservations '
+    }
+
+    if (reservation.length > 0)
       throw new ApiError(
         400,
         'Remove reservations first or set flag force to true, please'
       )
 
-    if (reservation.length > 0 && force === 'true') {
-      await Reservation.deleteMany({ hotelId: id })
-      message = 'and reservations '
-    }
-
     await Hotel.findByIdAndDelete(id)
 
     const hotels = await Hotel.find()
-    res.status(200).send({ message: `Hotel ${message}deleted`, hotels: hotels })
+    res.status(200).json({
+      message: `Hotel ${message}deleted`,
+      hotels: hotels,
+    })
   } catch (err) {
     console.log(err)
     throw new ApiError(500, 'Something went wrong')
   }
 })
 
-router.delete('/reservation/:id', async (req, res) => {
+router.delete('/reservation/:id', isHotelOwner, async (req, res) => {
   const id = req.params.id
   try {
     const reservation = await Reservation.findByIdAndDelete(id)
@@ -87,7 +90,7 @@ router.delete('/reservation/:id', async (req, res) => {
       )
     }
 
-    res.status(200).send('Reservation deleted')
+    res.status(200).json({ message: 'Reservation deleted' })
   } catch (err) {
     console.log(err)
     throw new ApiError(500, 'Something went wrong')
