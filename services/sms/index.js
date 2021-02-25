@@ -1,8 +1,10 @@
 const Nexmo = require('nexmo')
+const { smsAPI, smsPass } = require('../../config/local.json')
+
 
 const nexmo = new Nexmo({
-    apiKey: 'e5c1a352',
-    apiSecret: 'nD9CM2Hf3qjvzVZE',
+    apiKey: smsAPI,
+    apiSecret: smsPass,
   });
 
 const smsSend = (from, number, text) => {

@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer')
 const handlebars = require('handlebars')
 const fs = require('fs')
 const path = require('path')
+const { emailUser, emailPass } = require('../../config/local.json')
 
 function emailSend(email, subject, view, username, hotel) {
   const filePath = path.join(__dirname, `./views/${view}.html`)
@@ -15,8 +16,8 @@ function emailSend(email, subject, view, username, hotel) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'bookingcloneapi@gmail.com',
-      pass: 'BOOKINGcloneAPI',
+      user: emailUser,
+      pass: emailPass,
     },
   })
   const mailOptions = {
