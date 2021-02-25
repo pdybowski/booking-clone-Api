@@ -36,16 +36,27 @@ router.put('/hotel/:id', async (req, res) => {
   }
 })
 
-router.delete('/hotel/:id', async (req, res) => {
+router.delete('/hotel/:id&:force', async (req, res) => {
   const id = req.params.id
+  const force = req.params.force
+  let message = ''
   try {
     const reservation = await Reservation.find({ hotelId: id })
 
-    if (reservation.length > 0)
-      return res.status(400).send('Remove reservations')
+    if (reservation.length > 0 && force === 'false')
+      return res
+        .status(400)
+        .send('Remove reservations first or set flag force to true, please')
+
+    if (reservation.length > 0 && force === 'true') {
+      await Reservation.deleteMany({ hotelId: id })
+      message = 'and reservations '
+    }
 
     await Hotel.findByIdAndDelete(id)
-    res.status(200).send('Hotel deleted')
+
+    const hotels = await Hotel.find()
+    res.status(200).send({ message: `Hotel ${message}deleted`, hotels: hotels })
   } catch (err) {
     console.log(err)
     res.status(500).send('Something went wrong')
