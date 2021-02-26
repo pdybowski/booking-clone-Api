@@ -1,7 +1,8 @@
 {
   "jwtPrivateKey": "",
+  "clientUrl": "",
   "database": {
-    "host": "",
+    "host": "localhost",
     "port": 27017,
     "user": "",
     "password": "",
