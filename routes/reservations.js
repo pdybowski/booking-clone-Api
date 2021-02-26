@@ -9,7 +9,7 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   const reservations = await Reservation.find()
 
-  res.json({ reservations: reservations })
+  res.send(reservations)
 })
 
 router.post('/', async (req, res) => {
@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
 
   await reservation.save()
 
-  res.json({ reservation: reservation })
+  res.send(reservation)
 })
 
 router.put('/payment/:id', async (req, res) => {
@@ -33,7 +33,7 @@ router.put('/payment/:id', async (req, res) => {
       { new: true }
     )
 
-    res.json({ reservation: reservation })
+    res.send(reservation)
   } catch {
     throw new ApiError(404, 'Reservation with the gived ID was not found.')
   }

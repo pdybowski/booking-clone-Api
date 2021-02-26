@@ -37,7 +37,7 @@ module.exports = function (app) {
   })
 
   app.use('/api', limit)
-  app.use('/api/reservations', reservations)
+  app.use('/api/reservations', verifyToken, reservations)
   app.use('/api/hotels', hotels)
   app.use('/api/owner', verifyToken, owner)
   app.use('/api/auth', auth)

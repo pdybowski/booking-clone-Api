@@ -9,7 +9,7 @@ const { isHotelOwner } = require('../middleware/role')
 router.get('/hotels', isHotelOwner, async (req, res) => {
   const hotels = await Hotel.find()
 
-  res.status(200).json({ hotels: hotels })
+  res.status(200).send(hotels)
 })
 
 router.post('/hotel', isHotelOwner, async (req, res) => {
@@ -20,7 +20,7 @@ router.post('/hotel', isHotelOwner, async (req, res) => {
 
   await hotel.save()
 
-  res.status(200).json({ hotel: hotel })
+  res.status(200).send(hotel)
 })
 
 router.put('/hotel/:id', isHotelOwner, async (req, res) => {
@@ -29,7 +29,7 @@ router.put('/hotel/:id', isHotelOwner, async (req, res) => {
   try {
     const hotel = await Hotel.findByIdAndUpdate(req.params.id, req.body)
 
-    res.status(200).json({ hotel: hotel })
+    res.status(200).send(hotel)
   } catch (err) {
     console.log(err)
     throw new ApiError(500, 'Something went wrong')
@@ -40,13 +40,11 @@ router.delete('/hotel/:id', isHotelOwner, async (req, res) => {
   const { id } = req.params
   const { forceDelete } = req.query
   const isForceDelete = forceDelete === 'true'
-  let message = ''
   try {
     const reservation = await Reservation.find({ hotelId: id })
 
     if (reservation.length > 0 && isForceDelete) {
       await Reservation.deleteMany({ hotelId: id })
-      message = 'and reservations '
     }
 
     if (reservation.length > 0)
@@ -58,10 +56,7 @@ router.delete('/hotel/:id', isHotelOwner, async (req, res) => {
     await Hotel.findByIdAndDelete(id)
 
     const hotels = await Hotel.find()
-    res.status(200).json({
-      message: `Hotel ${message}deleted`,
-      hotels: hotels,
-    })
+    res.status(200).send(hotels)
   } catch (err) {
     console.log(err)
     throw new ApiError(500, 'Something went wrong')
