@@ -7,7 +7,7 @@ const config = require('config')
 const mailUser = config.get('mail.user')
 const mailPass = config.get('mail.pass')
 
-function mailSend(mail, subject, view, username, hotel) {
+function sendMail(mail, subject, view, username, hotel) {
   const filePath = path.join(__dirname, `./views/${view}.html`)
   const source = fs.readFileSync(filePath, 'utf-8').toString()
   const template = handlebars.compile(source)
@@ -39,5 +39,5 @@ function mailSend(mail, subject, view, username, hotel) {
 }
 
 module.exports = {
-  mailSend,
+  sendMail: sendMail,
 }

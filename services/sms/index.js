@@ -9,12 +9,12 @@ const nexmo = new Nexmo({
   apiSecret: smsPass,
 })
 
-const smsSend = (from, number, text) => {
+const sendSms = (from, number, text) => {
   nexmo.message.sendSms(from, number, text)
 }
 
 //number format - 48111222333
 
 module.exports = {
-  smsSend,
+  sendSms: sendSms,
 }
