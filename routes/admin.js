@@ -3,21 +3,22 @@ const express = require('express')
 const User = require('../models/user')
 const ApiError = require('../helpers/apiError')
 const router = express.Router()
+const { isAdmin } = require('../middleware/role')
 const { HOTEL_OWNER_ROLE, USER_ROLE } = require('../models/roles')
 
-router.get('/', async (req, res) => {
+router.get('/', isAdmin, async (req, res) => {
   const users = await User.find()
 
   res.json(users)
 })
 
-router.get('/owners', async (req, res) => {
+router.get('/owners', isAdmin, async (req, res) => {
   const owners = await User.find({ role: HOTEL_OWNER_ROLE })
 
   res.json(owners)
 })
 
-router.put('/owner/accept/:email', async (req, res) => {
+router.put('/owner/accept/:email', isAdmin, async (req, res) => {
   const email = req.params.email
 
   try {
@@ -33,7 +34,7 @@ router.put('/owner/accept/:email', async (req, res) => {
   }
 })
 
-router.delete('/owner/:email', async (req, res) => {
+router.delete('/owner/:email', isAdmin, async (req, res) => {
   const email = req.params.email
 
   try {
@@ -52,7 +53,7 @@ router.delete('/owner/:email', async (req, res) => {
   }
 })
 
-router.delete('/:email', async (req, res) => {
+router.delete('/:email', isAdmin, async (req, res) => {
   const email = req.params.email
 
   try {
