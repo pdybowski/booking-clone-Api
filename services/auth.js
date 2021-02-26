@@ -59,7 +59,7 @@ const requestPasswordReset = async (email) => {
   const user = await User.findOne({ email })
 
   if (!user) {
-    throw new ApiError(400, 'User does not exists.')
+    throw new ApiError(404, 'User does not exists.')
   }
 
   let token = await Token.findOne({ userId: user._id })
