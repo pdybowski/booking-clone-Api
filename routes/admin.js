@@ -6,19 +6,19 @@ const router = express.Router()
 const { isAdmin } = require('../middleware/role')
 const { HOTEL_OWNER_ROLE, USER_ROLE } = require('../models/roles')
 
-router.get('/', isAdmin, async (req, res) => {
+router.get('/', async (req, res) => {
   const users = await User.find()
 
   res.json(users)
 })
 
-router.get('/owners', isAdmin, async (req, res) => {
+router.get('/owners', async (req, res) => {
   const owners = await User.find({ role: HOTEL_OWNER_ROLE })
 
   res.json(owners)
 })
 
-router.put('/owner/accept/:email', isAdmin, async (req, res) => {
+router.put('/owner/accept/:email', async (req, res) => {
   const email = req.params.email
 
   try {
@@ -29,12 +29,11 @@ router.put('/owner/accept/:email', isAdmin, async (req, res) => {
 
     res.status(200).json('Done')
   } catch (err) {
-    console.log(err)
     throw new ApiError(500, 'Something went wrong')
   }
 })
 
-router.delete('/owner/:email', isAdmin, async (req, res) => {
+router.delete('/owner/:email', async (req, res) => {
   const email = req.params.email
 
   try {
@@ -48,12 +47,11 @@ router.delete('/owner/:email', isAdmin, async (req, res) => {
 
     res.status(200).json(id)
   } catch (err) {
-    console.log(err)
     throw new ApiError(500, 'Something went wrong')
   }
 })
 
-router.delete('/:email', isAdmin, async (req, res) => {
+router.delete('/:email', async (req, res) => {
   const email = req.params.email
 
   try {
@@ -67,7 +65,6 @@ router.delete('/:email', isAdmin, async (req, res) => {
 
     res.status(200).json(id)
   } catch (err) {
-    console.log(err)
     throw new ApiError(500, 'Something went wrong')
   }
 })
