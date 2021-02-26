@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const validateCreateUser = require('../validations/createUser')
-const validateLoginUser = require('../validations/loginUser')
-const validateResetPassword = require('../validations/resetPassword')
+const validateCreateUser = require('../middleware/validateCreateUser')
+const validateLoginUser = require('../middleware/validateLoginUser')
+const validateResetPassword = require('../middleware/validateResetPassword')
 const authController = require('../controllers/auth')
 
 router.post('/register', validateCreateUser, (req, res, next) => {
