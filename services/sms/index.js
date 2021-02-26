@@ -14,3 +14,7 @@ const smsSend = (from, number, text) => {
 }
 
 //number format - 48111222333
+
+module.exports = {
+  smsSend,
+}

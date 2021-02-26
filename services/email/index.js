@@ -37,3 +37,7 @@ function mailSend(mail, subject, view, username, hotel) {
     }
   })
 }
+
+module.exports = {
+  mailSend,
+}
