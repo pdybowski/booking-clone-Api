@@ -26,6 +26,9 @@ const roomSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  occupiedDates: {
+    type: Array,
+  },
 })
 
 const Room = mongoose.model('Room', roomSchema)

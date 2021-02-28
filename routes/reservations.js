@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const express = require('express')
 const { Reservation, validate } = require('../models/reservation')
+const { Room } = require('../models/room')
 const ApiError = require('../helpers/apiError')
 const router = express.Router()
 
@@ -16,9 +17,22 @@ router.post('/', async (req, res) => {
   const { error } = validate(req.body)
   if (error) throw new ApiError(400, error.details[0].message)
 
+  const room = await Room.findById(req.body.roomId)
+  if (!room) throw new ApiError(400, 'Wrong room ID.')
+
+  const { occupiedDates } = room
+  const { startDate, endDate } = req.body
+
   let reservation = new Reservation(req.body)
 
   await reservation.save()
+
+  occupiedDates.push({
+    startDate: new Date(startDate),
+    endDate: new Date(endDate),
+  })
+
+  await room.save()
 
   res.send(reservation)
 })
