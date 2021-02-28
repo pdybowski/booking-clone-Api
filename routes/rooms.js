@@ -18,7 +18,10 @@ router.get('/free/:hotelId', async (req, res) => {
   const rooms = await Room.find({ hotelId: hotelId })
 
   rooms.forEach(async (room) => {
-    const reservation = await Reservation.find({ roomId: room._id })
+    const reservation = await Reservation.find({
+      hotelId: hotelId,
+      roomId: room._id,
+    })
     if (
       (startDate && endDate) < reservation.startDate ||
       (startDate && endDate) > reservation.endDate
