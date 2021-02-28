@@ -1,12 +1,12 @@
 const Nexmo = require('nexmo')
 const config = require('config')
 
-const smsAPI = config.get('sms.API')
-const smsPass = config.get('sms.pass')
+const smsApiKey = config.get('sms.key')
+const smsApiSecret = config.get('sms.secret')
 
 const nexmo = new Nexmo({
-  apiKey: smsAPI,
-  apiSecret: smsPass,
+  apiKey: smsApiKey,
+  apiSecret: smsApiSecret,
 })
 
 const sendSms = (from, number, text) => {

@@ -7,5 +7,13 @@
     "user": "",
     "password": "",
     "dbName": "bookingcloneDB"
+  },
+  "mail": {
+    "user": "",
+    "pass": ""
+  },
+  "sms": {
+    "key": "",
+    "secret": ""
   }
 }
