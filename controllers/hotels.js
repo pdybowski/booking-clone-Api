@@ -30,7 +30,8 @@ exports.getHotel = async (req, res, next) => {
 
 exports.getNumberOfHotels = async (req, res, next) => {
   try {
-    const hotels = await getNumberOfHotels(req.params.limit)
+    const limit = parseInt(req.params.limit)
+    const hotels = await getNumberOfHotels(limit)
     res.status(200).send(hotels)
   } catch (error) {
     next(new ApiError(400, 'Hotels cannot be fetched'))
