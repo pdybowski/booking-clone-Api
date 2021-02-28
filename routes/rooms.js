@@ -3,7 +3,7 @@ const express = require('express')
 const { Reservation } = require('../models/reservation')
 const { Room } = require('../models/room')
 const { Hotel } = require('../models/hotel')
-const ApiError = require('../helpers/apiError')
+const ApiError = require('../helspers/apiError')
 const router = express.Router()
 
 router.get('/free/:hotelId', async (req, res) => {
@@ -15,11 +15,14 @@ router.get('/free/:hotelId', async (req, res) => {
 
   const freeRooms = []
 
-  const reservations = await Reservation.find({ hotelId: hotelId })
-  
-  reservations.forEach((reservation) => {
-    if (reservation.startDate > endDate || reservation.endDate < startDate) {
-      const room = await Room.find({ _id: reservation.roomId })
+  const rooms = await Room.find({ hotelId: hotelId })
+
+  rooms.forEach(async (room) => {
+    const reservation = await Reservation.find({ roomId: room._id })
+    if (
+      (startDate && endDate) < reservation.startDate ||
+      (startDate && endDate) > reservation.endDate
+    ) {
       freeRooms.push(room)
     }
   })
