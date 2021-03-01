@@ -23,7 +23,7 @@ exports.updateHotel = async (id, data) => {
   const hotel = await Hotel.findByIdAndUpdate(id, data)
 
   if (!hotel) {
-    new ApiError(404, 'Hotel not found.')
+    throw new ApiError(404, 'Hotel not found.')
   }
 
   return hotel
@@ -53,13 +53,13 @@ exports.deleteHotel = async (id, isForceDelete) => {
 exports.deleteReservation = async (id) => {
   const reservation = await Reservation.findByIdAndDelete(id)
   if (!reservation) {
-    new ApiError(404, 'Reservation with given ID was not found')
+    throw new ApiError(404, 'Reservation with given ID was not found')
   }
 
   const days = calculateDays(reservation.startDay)
 
   if (reservation.isPaid || days <= 3) {
-    new ApiError(
+    throw new ApiError(
       400,
       'Can not delete reservation; reservation is paid or or there is less than 3 days to start the stay in the hotel'
     )

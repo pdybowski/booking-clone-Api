@@ -17,7 +17,7 @@ exports.acceptOwnersEmail = async (email, role) => {
   const user = await User.updateOne({ email: email }, { role: role })
 
   if (!user) {
-    new ApiError(404, 'User not found')
+    throw new ApiError(404, 'User not found')
   }
 
   return user
@@ -30,7 +30,7 @@ exports.deleteOwner = async (email, role) => {
   })
 
   if (!user) {
-    new ApiError(404, 'Wrong email or user is not a hotel owner')
+    throw new ApiError(404, 'Wrong email or user is not a hotel owner')
   }
 
   return user
@@ -42,6 +42,6 @@ exports.deleteUser = async (email, role) => {
     role: role,
   })
   if (!user) {
-    new ApiError(400, 'Wrong email')
+    throw new ApiError(400, 'Wrong email')
   }
 }

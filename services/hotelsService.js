@@ -11,7 +11,7 @@ exports.getHotel = async (hotelId) => {
   const hotel = await Hotel.findById(hotelId)
 
   if (!hotel) {
-    new ApiError(404, 'Hotel not found')
+    throw new ApiError(404, 'Hotel not found')
   }
 
   return hotel
