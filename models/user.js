@@ -87,6 +87,15 @@ userSchema.methods.verifyPassword = function (password, callback) {
   })
 }
 
+userSchema.methods.toJSON = function () {
+  var obj = this.toObject()
+  delete obj.createdAt
+  delete obj.updatedAt
+  delete obj.__v
+
+  return obj
+}
+
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, salt)
