@@ -14,6 +14,7 @@ const owner = require('../routes/owner')
 const auth = require('../routes/auth')
 const user = require('../routes/user')
 const admin = require('../routes/admin')
+const rooms = require('../routes/rooms')
 
 const limit = rateLimit({
   max: 100,
@@ -45,6 +46,7 @@ module.exports = function (app) {
   app.use('/api/auth', auth)
   app.use('/api/user', verifyToken, user)
   app.use('/api/admin', isAdmin, admin)
+  app.use('/api/rooms', rooms)
 
   app.use('*', (req, res, next) => {
     next(new ApiError(404, 'Route is not supported.'), req, res, next)
