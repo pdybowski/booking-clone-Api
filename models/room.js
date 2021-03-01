@@ -2,11 +2,6 @@ const Joi = require('joi')
 const mongoose = require('mongoose')
 
 const roomSchema = new mongoose.Schema({
-  hotelId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Hotel',
-    required: true,
-  },
   beds: {
     type: Object,
     single: {

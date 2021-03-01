@@ -1,26 +1,16 @@
-const mongoose = require('mongoose')
 const express = require('express')
-const { Reservation, validate } = require('../models/reservation')
+const Reservation = require('../models/reservation')
 const ApiError = require('../helpers/apiError')
 const router = express.Router()
+const validateCreateReservationData = require('../middleware/validateCreateReservation')
+const reservationController = require('../controllers/reservation')
 
-// TODO: add auth middlewear, when it will be ready
-
-router.get('/', async (req, res) => {
-  const reservations = await Reservation.find()
-
-  res.send(reservations)
+router.get('/', async (req, res, next) => {
+  reservationController.getReservations(req, res, next)
 })
 
-router.post('/', async (req, res) => {
-  const { error } = validate(req.body)
-  if (error) throw new ApiError(400, error.details[0].message)
-
-  let reservation = new Reservation(req.body)
-
-  await reservation.save()
-
-  res.send(reservation)
+router.post('/', validateCreateReservationData, async (req, res, next) => {
+  reservationController.saveReservation(req, res, next)
 })
 
 router.put('/payment/:id', async (req, res) => {

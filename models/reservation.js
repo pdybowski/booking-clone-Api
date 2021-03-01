@@ -1,7 +1,4 @@
-const { object } = require('joi')
-const Joi = require('joi')
 const mongoose = require('mongoose')
-Joi.objectId = require('joi-objectid')(Joi)
 
 const reservationSchema = new mongoose.Schema(
   {
@@ -52,21 +49,4 @@ const reservationSchema = new mongoose.Schema(
 
 const Reservation = mongoose.model('Reservation', reservationSchema)
 
-const validateReservation = (reservation) => {
-  const schema = Joi.object({
-    userId: Joi.objectId().required(),
-    hotelId: Joi.objectId().required(),
-    roomId: Joi.objectId().required(),
-    startDate: Joi.date().required(),
-    endDate: Joi.date().required(),
-    people: {
-      children: Joi.number().min(0).required(),
-      adults: Joi.number().min(1).required(),
-    },
-  })
-
-  return schema.validate(reservation)
-}
-
-exports.validate = validateReservation
-exports.Reservation = Reservation
+module.exports = Reservation
