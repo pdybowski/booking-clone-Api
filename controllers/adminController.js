@@ -7,7 +7,7 @@ const {
   acceptOwnersEmail,
   deleteOwner,
   deleteUser,
-} = require('../services/admin')
+} = require('../services/adminService')
 
 exports.getUsers = async (req, res, next) => {
   try {

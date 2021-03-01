@@ -5,7 +5,7 @@ const {
   getReservations,
   addReservation,
   updatePayment,
-} = require('../services/reservations')
+} = require('../services/reservationsService')
 
 const JoiValidate = (data) => {
   const { error } = validate(data)

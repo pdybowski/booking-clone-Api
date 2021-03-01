@@ -5,7 +5,7 @@ const {
   getHotel,
   getNumberOfHotels,
   getHotelsByCity,
-} = require('../services/hotels')
+} = require('../services/hotelsService')
 
 exports.getHotels = async (req, res, next) => {
   try {

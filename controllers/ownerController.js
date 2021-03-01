@@ -7,7 +7,7 @@ const {
   updateHotel,
   deleteHotel,
   deleteReservation,
-} = require('../services/owner')
+} = require('../services/ownerService')
 
 const JoiValidate = (data) => {
   const { error } = validate(data)
