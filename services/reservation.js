@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Reservation = require('../models/reservation')
-const { hotelExists, roomExists } = require('./hotel')
+const { hotelExists, roomExists, numberOfGuestsInRoom } = require('./hotel')
 const ApiError = require('../helpers/apiError')
 
 const getReservations = async (user) => {
@@ -15,13 +15,20 @@ const saveReservation = async (user, data) => {
     }
   }
 
-  const { hotelId, roomId } = data
+  const { hotelId, roomId, people } = data
 
   if (!(await hotelExists(hotelId))) {
     return false
   }
 
   if (!(await roomExists(hotelId, roomId))) {
+    return false
+  }
+
+  const guests = await numberOfGuestsInRoom(hotelId, roomId)
+  const numberOfPersons = +people.adults + +people.children
+
+  if (numberOfPersons > guests) {
     return false
   }
 
