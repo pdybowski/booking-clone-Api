@@ -1,5 +1,5 @@
 const express = require('express')
-const ownerController = require('../controllers/owner')
+const ownerController = require('../controllers/ownerController')
 const router = express.Router()
 const { isHotelOwner } = require('../middleware/role')
 
