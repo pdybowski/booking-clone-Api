@@ -1,66 +1,21 @@
-const mongoose = require('mongoose')
 const express = require('express')
-const { Hotel, validate } = require('../models/hotel')
-const { Reservation } = require('../models/reservation')
-const ApiError = require('../helpers/apiError')
+const ownerController = require('../controllers/ownerController')
 const router = express.Router()
-const { isHotelOwner } = require('../middleware/role')
 
-router.get('/hotels', isHotelOwner, async (req, res) => {
-  const hotels = await Hotel.find()
-
-  res.status(200).send(hotels)
+router.get('/hotels', async (req, res, next) => {
+  ownerController.getHotels(req, res, next)
 })
 
-router.post('/hotel', isHotelOwner, async (req, res) => {
-  const { error } = validate(req.body)
-  if (error) throw new ApiError(400, error.details[0].message)
-
-  const hotel = new Hotel(req.body)
-
-  await hotel.save()
-
-  res.status(200).send(hotel)
+router.post('/hotel', async (req, res, next) => {
+  ownerController.addHotel(req, res, next)
 })
 
-router.put('/hotel/:id', isHotelOwner, async (req, res) => {
-  const { error } = validate(req.body)
-  if (error) throw new ApiError(400, error.details[0].message)
-  try {
-    const hotel = await Hotel.findByIdAndUpdate(req.params.id, req.body)
-
-    res.status(200).send(hotel)
-  } catch (err) {
-    console.log(err)
-    throw new ApiError(500, 'Something went wrong')
-  }
+router.put('/hotel/:id', async (req, res, next) => {
+  ownerController.updateHotel(req, res, next)
 })
 
-router.delete('/hotel/:id', isHotelOwner, async (req, res) => {
-  const { id } = req.params
-  const { forceDelete } = req.query
-  const isForceDelete = forceDelete === 'true'
-  try {
-    const reservation = await Reservation.find({ hotelId: id })
-
-    if (reservation.length > 0 && isForceDelete) {
-      await Reservation.deleteMany({ hotelId: id })
-    }
-
-    if (reservation.length > 0)
-      throw new ApiError(
-        400,
-        'Remove reservations first or set flag force to true, please'
-      )
-
-    await Hotel.findByIdAndDelete(id)
-
-    const hotels = await Hotel.find()
-    res.status(200).send(hotels)
-  } catch (err) {
-    console.log(err)
-    throw new ApiError(500, 'Something went wrong')
-  }
+router.delete('/hotel/:id', async (req, res, next) => {
+  ownerController.deleteHotel(req, res, next)
 })
 
 module.exports = router

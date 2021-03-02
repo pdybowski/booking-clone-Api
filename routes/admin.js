@@ -1,65 +1,73 @@
-const mongoose = require('mongoose')
 const express = require('express')
-const User = require('../models/user')
-const ApiError = require('../helpers/apiError')
+const adminController = require('../controllers/adminController')
 const router = express.Router()
-const { HOTEL_OWNER_ROLE, USER_ROLE } = require('../models/roles')
 
-router.get('/', async (req, res) => {
-  const users = await User.find()
-
-  res.send(users)
+router.get('/users', async (req, res, next) => {
+  adminController.getUsers(req, res, next)
 })
 
-router.get('/owners', async (req, res) => {
-  const owners = await User.find({ role: HOTEL_OWNER_ROLE })
-
-  res.json(owners)
+router.get('/owners', async (req, res, next) => {
+  adminController.getHotelOwners(req, res, next)
 })
 
-router.put('/owner/accept/:email', async (req, res) => {
-  const email = req.params.email
+router.put('/owner/accept/:email', async (req, res, next) => {
+  adminController.acceptOwnersEmail(req, res, next)
+})
 
+router.put('/owner/status/:id', async (req, res, next) => {
+  adminController.verifyOwner(req, res, next)
+})
+
+router.delete('/owner/:email', async (req, res, next) => {
+  adminController.deleteOwner(req, res, next)
+})
+
+router.delete('/user/:email', async (req, res) => {
+  adminController.deleteUser(req, res, next)
+})
+
+router.post('/users/delete', async (req, res) => {
+  const { forceDelete } = req.query
+  const isForceDelete = forceDelete === 'true'
+  const usersWithReservation = []
   try {
-    await User.updateOne({ email: email }, { role: HOTEL_OWNER_ROLE })
+    await req.body.map(async (id) => {
+      const reservation = await Reservation.find({ userId: id })
 
-    res.status(200).json('Done')
+      if (reservation.length > 0 && isForceDelete) {
+        await Reservation.deleteMany({ userId: id })
+      }
+
+      if (reservation.length > 0 && !isForceDelete) {
+        usersWithReservation.push(id)
+        throw new ApiError(400, 'Remove reservations first')
+      }
+      await User.findByIdAndDelete(id)
+      res.status(200)
+    })
   } catch (err) {
     throw new ApiError(500, 'Something went wrong')
   }
 })
 
-router.delete('/owner/:email', async (req, res) => {
-  const email = req.params.email
-
+router.delete('/hotel/:id', async (req, res) => {
+  const hotelId = req.params.id
+  const { forceDelete } = req.query
+  const isForceDelete = forceDelete === 'true'
+  const reservation = await Reservation.find({ hotelId: id })
   try {
-    const user = await User.findOneAndDelete({
-      email: email,
-      role: HOTEL_OWNER_ROLE,
-    })
-    if (!user) {
-      throw new ApiError(400, 'Wrong email or user is not a hotel owner')
+    if (reservation.length > 0 && isForceDelete) {
+      await Reservation.deleteMany(hotelId)
+      await Hotel.findByIdAndDelete(hotelId)
+      //sms
     }
 
-    res.status(200).json(user)
-  } catch (err) {
-    throw new ApiError(500, 'Something went wrong')
-  }
-})
-
-router.delete('/:email', async (req, res) => {
-  const email = req.params.email
-
-  try {
-    const user = await User.findOneAndDelete({
-      email: email,
-      role: USER_ROLE,
-    })
-    if (!user) {
-      throw new ApiError(400, 'Wrong email')
+    if (reservation.length > 0 && !isForceDelete) {
+      throw new ApiError(400, 'Remove reservation first')
     }
 
-    res.status(200).json(user)
+    await Hotel.findByIdAndDelete(hotelId)
+    res.status(200).send('Hotel removed')
   } catch (err) {
     throw new ApiError(500, 'Something went wrong')
   }

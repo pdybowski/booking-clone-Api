@@ -7,7 +7,7 @@ const {
   numberOfGuestsInRoom,
   getHotelIdsForOwner,
   getHotelOwnerId,
-} = require('./hotel')
+} = require('./hotelsService')
 const { addDaysToDate } = require('../helpers/date')
 const ApiError = require('../helpers/apiError')
 
@@ -206,9 +206,22 @@ const cancelReservation = async (user, reservationId) => {
   return deletedReservation !== null
 }
 
+const updatePayment = async (id) => {
+  const reservation = await Reservation.findByIdAndUpdate(
+    id,
+    {
+      isPaid: true,
+    },
+    { new: true }
+  )
+
+  return reservation
+}
+
 module.exports = {
   getReservations,
   saveReservation,
   isRoomAvailable,
   cancelReservation,
+  updatePayment,
 }
