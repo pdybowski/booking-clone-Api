@@ -4,9 +4,9 @@ const { validateData } = require('./validateData')
 
 module.exports = function validateCreateReservation(data) {
   const schema = Joi.object({
-    userId: Joi.objectId().required().label('User Id'),
-    hotelId: Joi.objectId().required().label('Hotel Id'),
-    roomId: Joi.objectId().required().label('Room Id'),
+    user: Joi.objectId().required().label('User Id'),
+    hotel: Joi.objectId().required().label('Hotel Id'),
+    room: Joi.objectId().required().label('Room Id'),
     startDate: Joi.date().iso().required().label('Reservation start date'),
     endDate: Joi.date()
       .iso()

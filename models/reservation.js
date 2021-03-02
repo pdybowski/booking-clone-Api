@@ -2,19 +2,18 @@ const mongoose = require('mongoose')
 
 const reservationSchema = new mongoose.Schema(
   {
-    userId: {
+    user: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    hotelId: {
+    hotel: {
       type: mongoose.Types.ObjectId,
       ref: 'Hotel',
       required: true,
     },
-    roomId: {
+    room: {
       type: mongoose.Types.ObjectId,
-      ref: 'Room',
       required: true,
     },
     startDate: {
@@ -46,6 +45,15 @@ const reservationSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
+
+reservationSchema.methods.toJSON = function () {
+  var obj = this.toObject()
+  delete obj.createdAt
+  delete obj.updatedAt
+  delete obj.__v
+
+  return obj
+}
 
 const Reservation = mongoose.model('Reservation', reservationSchema)
 
