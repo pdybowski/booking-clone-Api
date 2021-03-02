@@ -14,7 +14,6 @@ const owner = require('../routes/owner')
 const auth = require('../routes/auth')
 const user = require('../routes/user')
 const admin = require('../routes/admin')
-const rooms = require('../routes/rooms')
 
 const limit = rateLimit({
   max: 100,
