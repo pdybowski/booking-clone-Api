@@ -17,7 +17,7 @@ exports.getHotel = async (hotelId) => {
   return hotel
 }
 
-exports.getNumberOfHotels = async (limit) => {
+exports.getLimitedHotels = async (limit) => {
   const hotels = await Hotel.find().limit(limit)
 
   return hotels
