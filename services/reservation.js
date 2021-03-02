@@ -6,6 +6,7 @@ const {
   roomExists,
   numberOfGuestsInRoom,
   getHotelIdsForOwner,
+  getHotelOwnerId,
 } = require('./hotel')
 const { addDaysToDate } = require('../helpers/date')
 const ApiError = require('../helpers/apiError')
@@ -182,6 +183,18 @@ const cancelReservation = async (user, reservationId) => {
     if (!user._id.equals(mongoose.Types.ObjectId(reservation.user))) {
       throw new ApiError(403, 'You are not allowed to cancel this reservation.')
     }
+  } else if (user.isHotelOwner) {
+    const hotelOwnerId = await getHotelOwnerId(reservation.hotel)
+
+    if (!hotelOwnerId) {
+      throw new ApiError(400, 'An error occurred while cancelling reservation.')
+    }
+
+    if (!user._id.equals(mongoose.Types.ObjectId(hotelOwnerId))) {
+      throw new ApiError(403, 'You are not allowed to cancel this reservation.')
+    }
+  } else {
+    throw new ApiError(403, 'You are not allowed to cancel this reservation.')
   }
 
   if (!canReservationBeCancelled(reservation)) {

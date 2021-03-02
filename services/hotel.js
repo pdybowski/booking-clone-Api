@@ -24,9 +24,20 @@ const getHotelIdsForOwner = async (hotelOwnerId) => {
   return await Hotel.find({ ownerId: hotelOwnerId }).distinct('_id')
 }
 
+const getHotelOwnerId = async (hotelId) => {
+  const result = await Hotel.findOne({ _id: hotelId }).select('ownerId -_id')
+
+  if (!result) {
+    return null
+  }
+
+  return result.ownerId
+}
+
 module.exports = {
   hotelExists,
   roomExists,
   numberOfGuestsInRoom,
   getHotelIdsForOwner,
+  getHotelOwnerId,
 }

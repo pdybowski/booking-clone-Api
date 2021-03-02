@@ -63,33 +63,4 @@ router.delete('/hotel/:id', isHotelOwner, async (req, res) => {
   }
 })
 
-router.delete('/reservation/:id', isHotelOwner, async (req, res) => {
-  const id = req.params.id
-  try {
-    const reservation = await Reservation.findByIdAndDelete(id)
-    if (!reservation) {
-      throw new ApiError(404, 'Reservation with given ID was not found')
-    }
-
-    const startDate = new Date(reservation.startDate)
-    const currentDate = new Date('<YYYY-mm-ddTHH:MM:ssZ>')
-
-    const msPerDay = 1000 * 60 * 60 * 24
-    const msBetween = startDate.getTime() - currentDate.getTime()
-    const days = Math.floor(msBetween / msPerDay)
-
-    if (reservation.isPaid || days <= 3) {
-      throw new ApiError(
-        400,
-        'Can not delete reservation; reservation is paid or or there is less than 3 days to start the stay in the hotel'
-      )
-    }
-
-    res.status(200).json({ message: 'Reservation deleted' })
-  } catch (err) {
-    console.log(err)
-    throw new ApiError(500, 'Something went wrong')
-  }
-})
-
 module.exports = router
