@@ -31,3 +31,5 @@ exports.getFreeRooms = async (req) => {
 
   return freeRooms
 }
+
+exports.addRoom = (req) => {}

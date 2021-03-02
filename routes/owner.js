@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const express = require('express')
 const { Hotel, validate } = require('../models/hotel')
+const { Room, validateRoom } = require('../models/room')
 const { Reservation } = require('../models/reservation')
 const ApiError = require('../helpers/apiError')
 const router = express.Router()
@@ -90,6 +91,21 @@ router.delete('/reservation/:id', isHotelOwner, async (req, res) => {
     console.log(err)
     throw new ApiError(500, 'Something went wrong')
   }
+})
+
+router.post('/rooms/', isHotelOwner, async (req, res) => {
+  const { error } = validateRoom(req.body)
+  if (error) throw new ApiError(400, error.details[0].message)
+
+  const hotel = await Hotel.find({ _id: req.params.hotelId })
+  if (!hotel) throw new ApiError(400, 'Hotel with provided ID was not found.')
+
+  const room = new Room(req.body)
+
+  await room.save()
+  await Hotel.updateOne({ $push: { rooms: room } })
+
+  res.status(200).send(room)
 })
 
 module.exports = router
