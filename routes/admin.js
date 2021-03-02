@@ -7,7 +7,7 @@ const { HOTEL_OWNER_ROLE, USER_ROLE } = require('../models/roles')
 const { Reservation } = require('../models/reservation')
 const { Hotel } = require('../models/hotel')
 
-router.get('/', async (req, res) => {
+router.get('/users', async (req, res) => {
   const users = await User.find()
 
   res.send(users)
@@ -31,11 +31,11 @@ router.put('/owner/accept/:email', async (req, res) => {
   }
 })
 
-router.put('/owner/status/:email', async (req, res) => {
-  const email = req.params.email
+router.put('/owner/status/:id', async (req, res) => {
+  const id = req.params.id
 
   try {
-    await User.updateOne({ email: email }, { isVerified: true })
+    await User.findOneAndUpdate({ _id: id }, { isVerified: true })
 
     res.status(200).json('Done')
   } catch (err) {
@@ -46,7 +46,7 @@ router.put('/owner/status/:email', async (req, res) => {
 router.post('/users/delete', async (req, res) => {
   const { forceDelete } = req.query
   const isForceDelete = forceDelete === 'true'
-  const useresWithReservation = []
+  const usersWithReservation = []
   try {
     await req.body.map(async (id) => {
       const reservation = await Reservation.find({ userId: id })
@@ -55,20 +55,15 @@ router.post('/users/delete', async (req, res) => {
         await Reservation.deleteMany({ userId: id })
       }
 
-      if (reservation.length > 0) {
-        useresWithReservation.push(id)
+      if (reservation.length > 0 && !isForceDelete) {
+        usersWithReservation.push(id)
         throw new ApiError(400, 'Remove reservations first')
       }
       await User.findByIdAndDelete(id)
-      res
-        .status(200)
-        .send(
-          'User deleted, users where neeed remove reserfation first' +
-            useresWithReservation
-        )
+      res.status(200)
     })
   } catch (err) {
-    res.status(500).send(err)
+    throw new ApiError(500, 'Something went wrong')
   }
 })
 
@@ -120,7 +115,7 @@ router.delete('/hotel/:id', async (req, res) => {
       //sms
     }
 
-    if (reservation.length > 0) {
+    if (reservation.length > 0 && !isForceDelete) {
       throw new ApiError(400, 'Remove reservation first')
     }
 
