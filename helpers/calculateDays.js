@@ -1,5 +1,5 @@
-exports.calculateDays = (startDate) => {
-  const startDate = new Date(startDate)
+exports.calculateDays = (startDateData) => {
+  const startDate = new Date(startDateData)
   const currentDate = new Date('<YYYY-mm-ddTHH:MM:ssZ>')
 
   const msPerDay = 1000 * 60 * 60 * 24
