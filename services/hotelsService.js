@@ -1,5 +1,5 @@
 const ApiError = require('../helpers/apiError')
-const Hotel = require('../models/hotel')
+const { Hotel } = require('../models/hotel')
 
 exports.getHotels = async () => {
   const hotels = await Hotel.find()
