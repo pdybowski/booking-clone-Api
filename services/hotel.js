@@ -15,8 +15,13 @@ const numberOfGuestsInRoom = async (hotelId, roomId) => {
   return room.beds.single + 2 * room.beds.double
 }
 
+const getHotelIdsForOwner = async (hotelOwnerId) => {
+  return await Hotel.find({ ownerId: hotelOwnerId }).distinct('_id')
+}
+
 module.exports = {
   hotelExists,
   roomExists,
   numberOfGuestsInRoom,
+  getHotelIdsForOwner,
 }

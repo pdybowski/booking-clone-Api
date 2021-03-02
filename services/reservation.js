@@ -1,7 +1,12 @@
 const mongoose = require('mongoose')
 const Reservation = require('../models/reservation')
 const { Address } = require('../models/address')
-const { hotelExists, roomExists, numberOfGuestsInRoom } = require('./hotel')
+const {
+  hotelExists,
+  roomExists,
+  numberOfGuestsInRoom,
+  getHotelIdsForOwner,
+} = require('./hotel')
 const { userExists } = require('./user')
 const ApiError = require('../helpers/apiError')
 
@@ -16,7 +21,7 @@ const isRoomAvailable = async (hotelId, roomId, startDate, endDate) => {
   }))
 }
 
-const getReservations = async (user) => {
+const getUserReservations = async (user) => {
   const reservations = await Reservation.find({ user: user._id })
     .select('-user')
     .populate({
@@ -48,6 +53,7 @@ const getReservations = async (user) => {
         name: reservation.hotel.name,
         address: reservation.hotel.localization,
         room: {
+          roomNumber: room.roomNumber,
           price: room.price,
           description: room.description,
         },
@@ -56,36 +62,95 @@ const getReservations = async (user) => {
   })
 }
 
-const saveReservation = async (user, data) => {
-  if (user.isAdmin) {
-    if (!(await userExists(data.userId))) {
-      return false
+const getHotelOwnerReservations = async (user) => {
+  const hotelIds = await getHotelIdsForOwner(user._id)
+  const reservations = await Reservation.find({ hotel: { $in: hotelIds } })
+    .populate({
+      path: 'user',
+      select: 'email firstName lastName -_id',
+    })
+    .populate({
+      path: 'hotel',
+      select: 'name localization rooms',
+      populate: {
+        path: 'localization',
+        select: {
+          _id: 0,
+          country: 1,
+          city: 1,
+          zipcode: 1,
+          street: 1,
+          buildingNumber: 1,
+        },
+        model: Address,
+      },
+    })
+
+  return reservations.map((reservation) => {
+    const room = reservation.hotel.rooms.id(reservation.room)
+
+    return {
+      _id: reservation._id,
+      isPaid: reservation.isPaid,
+      startDate: reservation.startDate,
+      endDate: reservation.endDate,
+      people: reservation.people,
+      hotel: {
+        name: reservation.hotel.name,
+        address: reservation.hotel.localization,
+        room: {
+          roomNumber: room.roomNumber,
+          price: room.price,
+          description: room.description,
+        },
+      },
+      user: {
+        email: reservation.user.email,
+        firstName: reservation.user.firstName,
+        lastName: reservation.user.lastName,
+      },
     }
-  } else {
+  })
+}
+
+const getReservations = async (user) => {
+  if (user.isStandardUser) {
+    return await getUserReservations(user)
+  } else if (user.isHotelOwner) {
+    return await getHotelOwnerReservations(user)
+  }
+}
+
+const saveReservation = async (user, data) => {
+  if (user.isStandardUser) {
     if (!user._id.equals(mongoose.Types.ObjectId(data.user))) {
       throw new ApiError(403, 'You are not allowed to create a reservation.')
     }
+  } else {
+    throw new ApiError(403, 'You are not allowed to create a reservation.')
   }
 
-  const { hotelId, roomId, people, startDate, endDate } = data
+  const defaultErrorMessage = 'Reservation failed.'
 
-  if (!(await hotelExists(hotelId))) {
-    return false
+  const { hotel, room, people, startDate, endDate } = data
+
+  if (!(await hotelExists(hotel))) {
+    throw new ApiError(404, defaultErrorMessage)
   }
 
-  if (!(await roomExists(hotelId, roomId))) {
-    return false
+  if (!(await roomExists(hotel, room))) {
+    throw new ApiError(404, defaultErrorMessage)
   }
 
-  if (!(await isRoomAvailable(hotelId, roomId, startDate, endDate))) {
-    return false
+  if (!(await isRoomAvailable(hotel, room, startDate, endDate))) {
+    throw new ApiError(404, 'The room is not available.')
   }
 
-  const guests = await numberOfGuestsInRoom(hotelId, roomId)
+  const guests = await numberOfGuestsInRoom(hotel, room)
   const numberOfPersons = +people.adults + +people.children
 
   if (numberOfPersons > guests) {
-    return false
+    throw new ApiError(404, 'Exceeded number of visitors.')
   }
 
   const reservation = new Reservation(data)

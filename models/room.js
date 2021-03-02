@@ -2,6 +2,10 @@ const Joi = require('joi')
 const mongoose = require('mongoose')
 
 const roomSchema = new mongoose.Schema({
+  roomNumber: {
+    type: String,
+    required: true,
+  },
   beds: {
     type: Object,
     single: {
