@@ -3,6 +3,7 @@ const express = require('express')
 const { Hotel } = require('../models/hotel')
 const ApiError = require('../helpers/apiError')
 const router = express.Router()
+const hotelsController = require('../controllers/hotelsController')
 
 router.get('/', async (req, res) => {
   const hotels = await Hotel.find()
@@ -33,6 +34,10 @@ router.get('/city/:city', async (req, res) => {
   const hotels = await Hotel.find({ localization: { city: city } })
 
   res.status(200).send(hotels)
+})
+
+router.get('/free/:hotelId', async (req, res, next) => {
+  hotelsController.getFreeRooms(req, res, next)
 })
 
 module.exports = router
