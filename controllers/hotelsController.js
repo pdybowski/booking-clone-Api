@@ -3,7 +3,7 @@ const ApiError = require('../helpers/apiError')
 const {
   getHotels,
   getHotel,
-  getNumberOfHotels,
+  getLimitedHotels,
   getHotelsByCity,
 } = require('../services/hotelsService')
 
@@ -28,10 +28,10 @@ exports.getHotel = async (req, res, next) => {
   }
 }
 
-exports.getNumberOfHotels = async (req, res, next) => {
+exports.getLimitedHotels = async (req, res, next) => {
   try {
     const limit = parseInt(req.params.limit)
-    const hotels = await getNumberOfHotels(limit)
+    const hotels = await getLimitedHotels(limit)
     res.status(200).send(hotels)
   } catch (error) {
     next(new ApiError(400, 'Hotels cannot be fetched'))

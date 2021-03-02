@@ -7,7 +7,7 @@ router.get('/', async (req, res, next) => {
 })
 
 router.get('/:limit', async (req, res, next) => {
-  hotelController.getNumberOfHotels(req, res, next)
+  hotelController.getLimitedHotels(req, res, next)
 })
 
 router.get('/hotel/:hotelId', async (req, res, next) => {
