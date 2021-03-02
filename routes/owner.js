@@ -93,7 +93,7 @@ router.delete('/reservation/:id', isHotelOwner, async (req, res) => {
   }
 })
 
-router.post('/rooms/', isHotelOwner, async (req, res, next) => {
+router.post('/rooms', isHotelOwner, async (req, res, next) => {
   ownerController.addRoom(req, res, next)
 })
 
