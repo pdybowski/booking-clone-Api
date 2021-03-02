@@ -10,6 +10,11 @@ const roomExists = async (hotelId, roomId) => {
 
 const numberOfGuestsInRoom = async (hotelId, roomId) => {
   const hotel = await Hotel.findOne({ _id: hotelId, 'rooms._id': roomId })
+
+  if (!hotel) {
+    return 0
+  }
+
   const room = hotel.rooms.id(roomId)
 
   return room.beds.single + 2 * room.beds.double

@@ -7,8 +7,10 @@ const {
   numberOfGuestsInRoom,
   getHotelIdsForOwner,
 } = require('./hotel')
-const { userExists } = require('./user')
+const { addDaysToDate } = require('../helpers/date')
 const ApiError = require('../helpers/apiError')
+
+const CANCELLATION_DATE = 3
 
 const isRoomAvailable = async (hotelId, roomId, startDate, endDate) => {
   return !(await Reservation.exists({
@@ -19,6 +21,16 @@ const isRoomAvailable = async (hotelId, roomId, startDate, endDate) => {
       { endDate: { $gt: startDate, $lte: endDate } },
     ],
   }))
+}
+
+const canReservationBeCancelled = (reservation) => {
+  const date = addDaysToDate(
+    new Date(reservation.startDate),
+    -CANCELLATION_DATE
+  )
+  const currentDate = new Date()
+
+  return !reservation.isPaid && currentDate.getTime() < date.getTime()
 }
 
 const getUserReservations = async (user) => {
@@ -159,8 +171,31 @@ const saveReservation = async (user, data) => {
   return true
 }
 
+const cancelReservation = async (user, reservationId) => {
+  const reservation = await Reservation.findOne({ _id: reservationId })
+
+  if (!reservation) {
+    throw new ApiError(404, 'Reservation not found.')
+  }
+
+  if (user.isStandardUser) {
+    if (!user._id.equals(mongoose.Types.ObjectId(reservation.user))) {
+      throw new ApiError(403, 'You are not allowed to cancel this reservation.')
+    }
+  }
+
+  if (!canReservationBeCancelled(reservation)) {
+    throw new ApiError(400, 'The reservation cannot be cancelled.')
+  }
+
+  const deletedReservation = await reservation.delete()
+
+  return deletedReservation !== null
+}
+
 module.exports = {
   getReservations,
   saveReservation,
   isRoomAvailable,
+  cancelReservation,
 }

@@ -13,6 +13,10 @@ router.post('/', validateCreateReservationData, async (req, res, next) => {
   reservationController.saveReservation(req, res, next)
 })
 
+router.delete('/:id', async (req, res, next) => {
+  reservationController.cancelReservation(req, res, next)
+})
+
 router.put('/payment/:id', async (req, res) => {
   try {
     const reservation = await Reservation.findByIdAndUpdate(
