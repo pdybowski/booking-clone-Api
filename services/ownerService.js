@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const { validateRoom } = require('../validations/room')
 const ApiError = require('../helpers/apiError')
-const { Hotel, validate } = require('../models/hotel')
+const { Hotel } = require('../models/hotel')
+
 const { Reservation } = require('../models/reservation')
 const { calculateDays } = require('../helpers/calculateDays')
 
@@ -28,11 +29,6 @@ exports.addRoom = async (req) => {
   return room
 }
 
-const JoiValidate = (data) => {
-  const { error } = validate(data)
-  if (error) throw new ApiError(400, error.details[0].message)
-}
-
 exports.getHotels = async () => {
   const hotels = await Hotel.find()
 
@@ -40,16 +36,12 @@ exports.getHotels = async () => {
 }
 
 exports.addHotel = async (data) => {
-  JoiValidate(data)
   const hotel = new Hotel(data)
-
   await hotel.save()
-
   return hotel
 }
 
 exports.updateHotel = async (id, data) => {
-  JoiValidate(data)
   const hotel = await Hotel.findByIdAndUpdate(id, data)
 
   if (!hotel) {
@@ -60,17 +52,19 @@ exports.updateHotel = async (id, data) => {
 }
 
 exports.deleteHotel = async (id, isForceDelete) => {
-  const reservation = await Reservation.find({ hotelId: id })
+  const reservation = await Reservation.find({ hotel: id })
 
-  if (reservation.length > 0 && isForceDelete) {
-    await Reservation.deleteMany({ hotelId: id })
-  }
+  console.log(reservation)
 
-  if (reservation.length > 0) {
-    new ApiError(
+  if (reservation.length > 0 && !isForceDelete) {
+    throw new ApiError(
       400,
       'Remove reservations first or set flag force to true, please'
     )
+  }
+
+  if (reservation.length > 0 && isForceDelete) {
+    await Reservation.deleteMany({ hotel: id })
   }
 
   await Hotel.findByIdAndDelete(id)

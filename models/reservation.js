@@ -57,4 +57,4 @@ reservationSchema.methods.toJSON = function () {
 
 const Reservation = mongoose.model('Reservation', reservationSchema)
 
-module.exports = Reservation
+exports.Reservation = Reservation
