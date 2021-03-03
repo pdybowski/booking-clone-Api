@@ -12,7 +12,7 @@ const {
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await getUsers()
+    const users = await getUsers(USER_ROLE, HOTEL_OWNER_ROLE)
     res.status(200).send(users)
   } catch (error) {
     next(new ApiError(400, 'Users data cannot be fetched.'))
