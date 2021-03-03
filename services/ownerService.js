@@ -54,8 +54,6 @@ exports.updateHotel = async (id, data) => {
 exports.deleteHotel = async (id, isForceDelete) => {
   const reservation = await Reservation.find({ hotel: id })
 
-  console.log(reservation)
-
   if (reservation.length > 0 && !isForceDelete) {
     throw new ApiError(
       400,

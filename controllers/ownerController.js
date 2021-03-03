@@ -36,7 +36,6 @@ exports.addRoom = async (req, res, next) => {
     const room = await addRoom(req)
     res.status(200).send(room)
   } catch (error) {
-    console.log(error)
     next(new ApiError(400, 'Can not add a room.'))
   }
 }
