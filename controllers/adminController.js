@@ -7,7 +7,9 @@ const {
   acceptOwnersEmail,
   deleteOwner,
   deleteUser,
-  verifyOwner,
+  deleteUsers,
+  deleteHotel,
+  verifyUser,
 } = require('../services/adminService')
 
 exports.getUsers = async (req, res, next) => {
@@ -67,10 +69,34 @@ exports.deleteUser = async (req, res, next) => {
   }
 }
 
-exports.verifyOwner = async (req, res, next) => {
+exports.deleteUsers = async (req, res, next) => {
   try {
-    const user = await verifyOwner(req.params.id)
-    res.status(200)
+    const user = await deleteUsers(req.body, req.query)
+    res.status(200).send(user)
+  } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      return next(new ApiError(404, 'User not found'))
+    }
+    next(new ApiError(400, 'User data cannot be fetched'))
+  }
+}
+
+exports.deleteHotel = async (req, res, next) => {
+  try {
+    const hotel = await deleteHotel(req.params.id, req.query)
+    res.status(200).send(hotel)
+  } catch (error) {
+    if (error instanceof mongoose.Error.CastError) {
+      return next(new ApiError(404, 'User not found'))
+    }
+    next(new ApiError(400, 'User data cannot be fetched'))
+  }
+}
+
+exports.verifyUser = async (req, res, next) => {
+  try {
+    const user = await verifyUser(req.params.id)
+    res.status(200).send(user)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))

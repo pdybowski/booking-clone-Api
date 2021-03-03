@@ -15,7 +15,7 @@ router.put('/owner/accept/:id', async (req, res, next) => {
 })
 
 router.put('/owner/status/:id', async (req, res, next) => {
-  adminController.verifyOwner(req, res, next)
+  adminController.verifyUser(req, res, next)
 })
 
 router.delete('/owner/:id', async (req, res, next) => {
@@ -26,51 +26,12 @@ router.delete('/user/:id', async (req, res, next) => {
   adminController.deleteUser(req, res, next)
 })
 
-router.post('/users/delete', async (req, res) => {
-  const { forceDelete } = req.query
-  const isForceDelete = forceDelete === 'true'
-  const usersWithReservation = []
-  try {
-    await req.body.map(async (id) => {
-      const reservation = await Reservation.find({ userId: id })
-
-      if (reservation.length > 0 && isForceDelete) {
-        await Reservation.deleteMany({ userId: id })
-      }
-
-      if (reservation.length > 0 && !isForceDelete) {
-        usersWithReservation.push(id)
-        throw new ApiError(400, 'Remove reservations first')
-      }
-      await User.findByIdAndDelete(id)
-      res.status(200)
-    })
-  } catch (err) {
-    throw new ApiError(500, 'Something went wrong')
-  }
+router.post('/users/delete', async (req, res, next) => {
+  adminController.deleteUsers(req, res, next)
 })
 
-router.delete('/hotel/:id', async (req, res) => {
-  const hotelId = req.params.id
-  const { forceDelete } = req.query
-  const isForceDelete = forceDelete === 'true'
-  const reservation = await Reservation.find({ hotelId: id })
-  try {
-    if (reservation.length > 0 && isForceDelete) {
-      await Reservation.deleteMany(hotelId)
-      await Hotel.findByIdAndDelete(hotelId)
-      //sms
-    }
-
-    if (reservation.length > 0 && !isForceDelete) {
-      throw new ApiError(400, 'Remove reservation first')
-    }
-
-    await Hotel.findByIdAndDelete(hotelId)
-    res.status(200).send('Hotel removed')
-  } catch (err) {
-    throw new ApiError(500, 'Something went wrong')
-  }
+router.delete('/hotel/:id', async (req, res, next) => {
+  adminController.deleteHotel(req, res, next)
 })
 
 module.exports = router
