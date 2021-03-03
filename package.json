@@ -31,8 +31,8 @@
     "node": "15.4.0"
   },
   "scripts": {
-    "dev": "node index.js",
-    "dev:watch": "nodemon index.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
