@@ -13,8 +13,8 @@ exports.getHotelOwners = async (role) => {
   return owners
 }
 
-exports.acceptOwnersEmail = async (email, role) => {
-  const user = await User.updateOne({ email: email }, { role: role })
+exports.acceptOwnersEmail = async (id, role) => {
+  const user = await User.updateOne({ _id: id }, { role: role })
 
   if (!user) {
     throw new ApiError(404, 'User not found')
@@ -23,9 +23,9 @@ exports.acceptOwnersEmail = async (email, role) => {
   return user
 }
 
-exports.deleteOwner = async (email, role) => {
+exports.deleteOwner = async (id, role) => {
   const user = await User.findOneAndDelete({
-    email: email,
+    _id: id,
     role: role,
   })
 
@@ -36,9 +36,9 @@ exports.deleteOwner = async (email, role) => {
   return user
 }
 
-exports.deleteUser = async (email, role) => {
+exports.deleteUser = async (id, role) => {
   const user = await User.findOneAndDelete({
-    email: email,
+    _id: id,
     role: role,
   })
   if (!user) {

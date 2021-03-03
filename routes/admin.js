@@ -10,7 +10,7 @@ router.get('/owners', async (req, res, next) => {
   adminController.getHotelOwners(req, res, next)
 })
 
-router.put('/owner/accept/:email', async (req, res, next) => {
+router.put('/owner/accept/:id', async (req, res, next) => {
   adminController.acceptOwnersEmail(req, res, next)
 })
 
@@ -18,11 +18,11 @@ router.put('/owner/status/:id', async (req, res, next) => {
   adminController.verifyOwner(req, res, next)
 })
 
-router.delete('/owner/:email', async (req, res, next) => {
+router.delete('/owner/:id', async (req, res, next) => {
   adminController.deleteOwner(req, res, next)
 })
 
-router.delete('/user/:email', async (req, res) => {
+router.delete('/user/:id', async (req, res, next) => {
   adminController.deleteUser(req, res, next)
 })
 

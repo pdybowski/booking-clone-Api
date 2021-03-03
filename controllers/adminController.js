@@ -30,7 +30,7 @@ exports.getHotelOwners = async (req, res, next) => {
 
 exports.acceptOwnersEmail = async (req, res, next) => {
   try {
-    await acceptOwnersEmail(req.params.email, HOTEL_OWNER_ROLE)
+    await acceptOwnersEmail(req.params.id, HOTEL_OWNER_ROLE)
     res.status(200).json({ message: 'Done' })
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
@@ -43,7 +43,7 @@ exports.acceptOwnersEmail = async (req, res, next) => {
 
 exports.deleteOwner = async (req, res, next) => {
   try {
-    const owner = await deleteOwner(req.params.email, HOTEL_OWNER_ROLE)
+    const owner = await deleteOwner(req.params.id, HOTEL_OWNER_ROLE)
     res.status(200).send(owner)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
@@ -56,7 +56,7 @@ exports.deleteOwner = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   try {
-    const user = await deleteUser(req.params.email, USER_ROLE)
+    const user = await deleteUser(req.params.id, USER_ROLE)
     res.status(200).send(user)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
