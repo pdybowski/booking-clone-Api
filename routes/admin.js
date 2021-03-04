@@ -11,7 +11,7 @@ router.get('/owners', async (req, res, next) => {
 })
 
 router.put('/owner/accept/:id', async (req, res, next) => {
-  adminController.acceptOwnersEmail(req, res, next)
+  adminController.acceptUserToOwner(req, res, next)
 })
 
 router.put('/owner/status/:id', async (req, res, next) => {

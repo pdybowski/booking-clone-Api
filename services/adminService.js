@@ -15,7 +15,7 @@ exports.getHotelOwners = async (role) => {
   return owners
 }
 
-exports.acceptOwnersEmail = async (id, role) => {
+exports.acceptUserToOwner = async (id, role) => {
   const user = await User.updateOne({ _id: id }, { role: role })
 
   if (!user) {

@@ -4,7 +4,7 @@ const { HOTEL_OWNER_ROLE, USER_ROLE } = require('../models/roles')
 const {
   getUsers,
   getHotelOwners,
-  acceptOwnersEmail,
+  acceptUserToOwner,
   deleteOwner,
   deleteUser,
   deleteUsers,
@@ -30,9 +30,9 @@ exports.getHotelOwners = async (req, res, next) => {
   }
 }
 
-exports.acceptOwnersEmail = async (req, res, next) => {
+exports.acceptUserToOwner = async (req, res, next) => {
   try {
-    await acceptOwnersEmail(req.params.id, HOTEL_OWNER_ROLE)
+    await acceptUserToOwner(req.params.id, HOTEL_OWNER_ROLE)
     res.status(200).json({ message: 'Done' })
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
@@ -46,7 +46,7 @@ exports.acceptOwnersEmail = async (req, res, next) => {
 exports.deleteOwner = async (req, res, next) => {
   try {
     const owner = await deleteOwner(req.params.id, HOTEL_OWNER_ROLE)
-    res.status(200).send(owner)
+    res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
@@ -59,7 +59,7 @@ exports.deleteOwner = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const user = await deleteUser(req.params.id, USER_ROLE)
-    res.status(200).send(user)
+    res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
@@ -72,7 +72,7 @@ exports.deleteUser = async (req, res, next) => {
 exports.deleteUsers = async (req, res, next) => {
   try {
     const user = await deleteUsers(req.body, req.query)
-    res.status(200).send(user)
+    res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
