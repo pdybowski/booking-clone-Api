@@ -32,7 +32,7 @@ exports.deleteOwner = async (id, role) => {
   })
 
   if (!user) {
-    throw new ApiError(404, 'Wrong email or user is not a hotel owner')
+    throw new ApiError(404, 'Wrong ID or user is not a hotel owner')
   }
 
   return user
@@ -48,34 +48,37 @@ exports.deleteUser = async (id, role) => {
   }
 }
 
-exports.deleteUsers = async (users, force) => {
-  const isForceDelete = force === 'true'
-  const usersWithReservation = []
-
-  await users.map(async (id) => {
-    const reservation = await Reservation.find({ userId: id })
-
-    if (reservation.length > 0 && isForceDelete) {
-      await Reservation.deleteMany({ userId: id })
+exports.deleteUsers = async (users, isForceDelete) => {
+  for (const id of users) {
+    const user = await User.findById(id)
+    if (!user) {
+      throw new ApiError(404, 'User not found')
     }
-
+    const reservation = await Reservation.find({ user: id })
+    if (reservation.length > 0 && isForceDelete) {
+      await Reservation.deleteMany({ user: id })
+    }
     if (reservation.length > 0 && !isForceDelete) {
-      usersWithReservation.push(id)
       throw new ApiError(400, 'Remove reservations first')
     }
     await User.findByIdAndDelete(id)
-  })
+  }
 }
 
-exports.deleteHotel = async (hotelId, force) => {
-  const isForceDelete = force === 'true'
-  const reservation = await Reservation.find({ hotelId: hotelId })
+exports.deleteHotel = async (hotelId, isForceDelete) => {
+  const reservation = await Reservation.find({ hotel: hotelId })
+  const hotel = await Hotel.findById(hotelId)
+  if (!hotel) {
+    throw new ApiError(404, 'Hotel not found')
+  }
+  console.log(reservation)
   if (reservation.length > 0 && isForceDelete) {
-    await Reservation.deleteMany(hotelId)
+    await Reservation.deleteMany({ hotel: hotelId })
     await Hotel.findByIdAndDelete(hotelId)
     //sms
   }
   if (reservation.length > 0 && !isForceDelete) {
+    console.log('se')
     throw new ApiError(400, 'Remove reservation first')
   }
   await Hotel.findByIdAndDelete(hotelId)

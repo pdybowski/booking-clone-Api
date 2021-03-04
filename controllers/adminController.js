@@ -38,8 +38,7 @@ exports.acceptUserToOwner = async (req, res, next) => {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
     }
-
-    next(new ApiError(400, 'User data cannot be fetched'))
+    next(new ApiError(error.statusCode, error.message))
   }
 }
 
@@ -51,8 +50,7 @@ exports.deleteOwner = async (req, res, next) => {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
     }
-
-    next(new ApiError(400, 'Owner data cannot be fetched'))
+    next(new ApiError(error.statusCode, error.message))
   }
 }
 
@@ -64,42 +62,46 @@ exports.deleteUser = async (req, res, next) => {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
     }
-
-    next(new ApiError(400, 'User data cannot be fetched'))
+    next(new ApiError(error.statusCode, error.message))
   }
 }
 
 exports.deleteUsers = async (req, res, next) => {
   try {
-    const user = await deleteUsers(req.body, req.query)
+    const { forceDelete } = req.query
+    const isForceDelete = forceDelete === 'true'
+    const users = await deleteUsers(req.body, isForceDelete)
     res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
     }
-    next(new ApiError(400, 'User data cannot be fetched'))
+    next(new ApiError(error.statusCode, error.message))
   }
 }
 
 exports.deleteHotel = async (req, res, next) => {
   try {
-    const hotel = await deleteHotel(req.params.id, req.query)
+    const { forceDelete } = req.query
+    const isForceDelete = forceDelete === 'true'
+    const hotel = await deleteHotel(req.params.id, isForceDelete)
     res.status(200).send(hotel)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'User not found'))
+      return next(new ApiError(404, 'Hotel not found'))
     }
-    next(new ApiError(400, 'User data cannot be fetched'))
+    next(new ApiError(error.statusCode, error.message))
   }
 }
 
 exports.verifyUser = async (req, res, next) => {
   try {
-    const user = await verifyOwner(req.params.id)
-    res.sendStatus(200)
+    const user = await verifyUser(req.params.id)
+    res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
     }
+    next(new ApiError(error.statusCode, error.message))
   }
 }
