@@ -95,8 +95,8 @@ exports.deleteHotel = async (req, res, next) => {
 
 exports.verifyUser = async (req, res, next) => {
   try {
-    const user = await verifyUser(req.params.id)
-    res.status(200).send(user)
+    const user = await verifyOwner(req.params.id)
+    res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(404, 'User not found'))
