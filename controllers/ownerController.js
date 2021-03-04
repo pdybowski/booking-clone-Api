@@ -81,8 +81,7 @@ exports.deleteHotel = async (req, res, next) => {
     const { forceDelete } = req.query
     const isForceDelete = forceDelete === 'true'
     await deleteHotel(req.user._id, req.params.id, isForceDelete)
-    const hotels = await getHotels()
-    res.status(200).send(hotels)
+    res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       next(new ApiError(400, 'Hotel with given ID does not exist'))

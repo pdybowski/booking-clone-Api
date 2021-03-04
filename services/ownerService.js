@@ -67,9 +67,7 @@ exports.deleteHotel = async (data, id, isForceDelete) => {
 
   await Hotel.findByIdAndDelete(id)
 
-  const hotels = await Hotel.find({ ownerId: data })
-
-  return hotels
+  return true
 }
 
 exports.deleteReservation = async (id) => {
