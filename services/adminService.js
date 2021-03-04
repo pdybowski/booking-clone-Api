@@ -1,6 +1,7 @@
 const ApiError = require('../helpers/apiError')
 const User = require('../models/user')
 const Reservation = require('../models/reservation')
+const { Hotel } = require('../models/hotel')
 
 exports.getUsers = async (userRole, hotelOwnerRole) => {
   const users = await User.find({ role: { $in: [userRole, hotelOwnerRole] } })
