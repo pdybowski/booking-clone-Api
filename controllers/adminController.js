@@ -33,10 +33,10 @@ exports.getHotelOwners = async (req, res, next) => {
 exports.acceptUserToOwner = async (req, res, next) => {
   try {
     await acceptUserToOwner(req.params.id, HOTEL_OWNER_ROLE)
-    res.status(200).json({ message: 'Done' })
+    res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'User not found'))
+      return next(new ApiError(400, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -48,7 +48,7 @@ exports.deleteOwner = async (req, res, next) => {
     res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'User not found'))
+      return next(new ApiError(400, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -60,7 +60,7 @@ exports.deleteUser = async (req, res, next) => {
     res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'User not found'))
+      return next(new ApiError(400, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -74,7 +74,7 @@ exports.deleteUsers = async (req, res, next) => {
     res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'User not found'))
+      return next(new ApiError(400, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -88,7 +88,7 @@ exports.deleteHotel = async (req, res, next) => {
     res.status(200).send(hotel)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'Hotel not found'))
+      return next(new ApiError(400, 'Hotel not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -100,7 +100,7 @@ exports.verifyUser = async (req, res, next) => {
     res.status(200).json('Done')
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'User not found'))
+      return next(new ApiError(400, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
