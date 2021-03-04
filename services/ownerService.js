@@ -10,7 +10,7 @@ exports.addRoom = async (req) => {
   if (error) throw new ApiError(400, error.details[0].message)
 
   const hotel = await Hotel.find({ _id: req.params.hotelId })
-  const hotelId = hotel[0]._id
+  const hotelId = req.params.hotelId
   if (!hotel) throw new ApiError(400, 'Hotel with provided ID was not found.')
 
   const { beds, price, description, name } = req.body
