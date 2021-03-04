@@ -67,8 +67,8 @@ const validateHotel = (hotel) => {
     name: Joi.string().min(1).required(),
     clientsRate: Joi.array().items(schemaRate),
     email: Joi.string().email().required(),
-    description: Joi.string().min(0),
-    rooms: Joi.array().items(schemaRoom).required(),
+    description: Joi.string(),
+    rooms: Joi.array().min(1).items(schemaRoom).required(),
   })
 
   return schema.validate(hotel, { allowUnknown: false })

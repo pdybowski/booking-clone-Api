@@ -85,9 +85,8 @@ exports.deleteHotel = async (req, res, next) => {
     res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      next(new ApiError(400, 'Hotel with given ID does not exist'))
+      next(new ApiError(404, 'Hotel with given ID does not exist'))
     }
-    console.log(error.message)
     next(new ApiError(error.statusCode, error.message))
   }
 }
