@@ -51,7 +51,9 @@ exports.updateHotel = async (id, data) => {
   return hotel
 }
 
-exports.deleteHotel = async (id, isForceDelete) => {
+exports.deleteHotel = async (ownerId, id, isForceDelete) => {
+  const hotel = await Hotel.findById(id)
+  if (hotel.ownerId !== ownerId) throw new ApiError(403, 'Forbidden')
   const reservation = await Reservation.find({ hotel: id })
 
   if (reservation.length > 0 && !isForceDelete) {
@@ -66,8 +68,6 @@ exports.deleteHotel = async (id, isForceDelete) => {
   }
 
   await Hotel.findByIdAndDelete(id)
-
-  return true
 }
 
 exports.deleteReservation = async (id) => {

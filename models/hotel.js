@@ -21,7 +21,10 @@ const hotelSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  clientsRates: [clientRateSchema],
+  clientsRates: {
+    type: [clientRateSchema],
+    default: [],
+  },
   email: {
     type: String,
     required: true,
@@ -30,24 +33,45 @@ const hotelSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  rooms: [roomSchema],
+  rooms: {
+    type: [roomSchema],
+    required: true,
+  },
 })
 
 const Hotel = mongoose.model('Hotel', hotelSchema)
 
+//it will be moved in the next issue
+//----------------------------------------
+const schemaRate = Joi.object({
+  userId: Joi.objectId().required(),
+  desc: Joi.string(),
+  rateNumber: Joi.number().min(1).max(5),
+})
+
+const schemaRoom = Joi.object({
+  roomNumber: Joi.string().required(),
+  beds: {
+    single: Joi.number().min(0).required(),
+    double: Joi.number().min(0).required(),
+  },
+  price: Joi.number().min(10).required(),
+  description: Joi.string(),
+})
+//----------------------------------------
+
 const validateHotel = (hotel) => {
   const schema = Joi.object({
-    ownerId: Joi.objectId().required(),
     localization: Joi.object().required(),
     phoneNumber: JoiPhoneNumer.string().phoneNumber().required(),
     name: Joi.string().min(1).required(),
-    clientsRate: Joi.array(),
+    clientsRate: Joi.array().items(schemaRate),
     email: Joi.string().email().required(),
     description: Joi.string().min(0).required(),
-    rooms: Joi.array().required(),
+    rooms: Joi.array().items(schemaRoom).required(),
   })
 
-  return schema.validate(hotel, { allowUnknown: true })
+  return schema.validate(hotel, { allowUnknown: false })
 }
 
 exports.validateHotel = validateHotel

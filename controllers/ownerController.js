@@ -56,6 +56,7 @@ exports.addHotel = async (req, res, next) => {
     JoiValidateHotel(req.body)
     JoiValidateAdress(req.body.localization)
     JoiValidateRoom(req.body.rooms)
+    req.body.ownerId = req.user._id
     const hotel = await addHotel(req.body)
     res.status(200).send(hotel)
   } catch (error) {
@@ -80,13 +81,14 @@ exports.deleteHotel = async (req, res, next) => {
   try {
     const { forceDelete } = req.query
     const isForceDelete = forceDelete === 'true'
-    await deleteHotel(req.params.id, isForceDelete)
+    await deleteHotel(req.user._id, req.params.id, isForceDelete)
     res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       next(new ApiError(400, 'Hotel with given ID does not exist'))
     }
-    next(new ApiError(400, error))
+    console.log(error.message)
+    next(new ApiError(error.statusCode, error.message))
   }
 }
 
