@@ -3,7 +3,7 @@ const { validateRoom } = require('../validations/room')
 const ApiError = require('../helpers/apiError')
 const { Hotel } = require('../models/hotel')
 
-const { Reservation } = require('../models/reservation')
+const Reservation = require('../models/reservation')
 const { calculateDays } = require('../helpers/calculateDays')
 
 exports.addRoom = async (req) => {
@@ -29,8 +29,8 @@ exports.addRoom = async (req) => {
   return room
 }
 
-exports.getHotels = async () => {
-  const hotels = await Hotel.find()
+exports.getHotels = async (data) => {
+  const hotels = await Hotel.find({ ownerId: data })
 
   return hotels
 }
@@ -51,7 +51,7 @@ exports.updateHotel = async (id, data) => {
   return hotel
 }
 
-exports.deleteHotel = async (id, isForceDelete) => {
+exports.deleteHotel = async (data, id, isForceDelete) => {
   const reservation = await Reservation.find({ hotel: id })
 
   if (reservation.length > 0 && !isForceDelete) {
@@ -67,7 +67,7 @@ exports.deleteHotel = async (id, isForceDelete) => {
 
   await Hotel.findByIdAndDelete(id)
 
-  const hotels = await Hotel.find()
+  const hotels = await Hotel.find({ ownerId: data })
 
   return hotels
 }

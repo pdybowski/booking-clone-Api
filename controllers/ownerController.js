@@ -27,8 +27,10 @@ const JoiValidateAdress = (data) => {
 }
 
 const JoiValidateRoom = (data) => {
-  const { error } = validateRoom(data)
-  isError(error)
+  data.forEach((room) => {
+    const { error } = validateRoom(room)
+    isError(error)
+  })
 }
 
 exports.addRoom = async (req, res, next) => {
@@ -42,7 +44,7 @@ exports.addRoom = async (req, res, next) => {
 
 exports.getHotels = async (req, res, next) => {
   try {
-    const hotels = await getHotels()
+    const hotels = await getHotels(req.user._id)
     res.status(200).send(hotels)
   } catch (error) {
     next(new ApiError(400, 'Hotel data cannot be fetched.'))
@@ -78,7 +80,7 @@ exports.deleteHotel = async (req, res, next) => {
   try {
     const { forceDelete } = req.query
     const isForceDelete = forceDelete === 'true'
-    await deleteHotel(req.params.id, isForceDelete)
+    await deleteHotel(req.user._id, req.params.id, isForceDelete)
     const hotels = await getHotels()
     res.status(200).send(hotels)
   } catch (error) {

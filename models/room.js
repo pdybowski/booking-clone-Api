@@ -29,7 +29,7 @@ const roomSchema = new mongoose.Schema({
 
 const validateRoom = (room) => {
   const schema = Joi.object({
-    hotelId: Joi.objectId().required(),
+    roomNumber: Joi.string(),
     beds: {
       single: Joi.number().min(0),
       double: Joi.number().min(0),
