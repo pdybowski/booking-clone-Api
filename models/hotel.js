@@ -31,7 +31,7 @@ const hotelSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
+    default: '',
   },
   rooms: {
     type: [roomSchema],
@@ -67,7 +67,7 @@ const validateHotel = (hotel) => {
     name: Joi.string().min(1).required(),
     clientsRate: Joi.array().items(schemaRate),
     email: Joi.string().email().required(),
-    description: Joi.string().min(0).required(),
+    description: Joi.string().min(0),
     rooms: Joi.array().items(schemaRoom).required(),
   })
 
