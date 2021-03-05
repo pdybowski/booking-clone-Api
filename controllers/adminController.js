@@ -57,10 +57,10 @@ exports.deleteOwner = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     const user = await deleteUser(req.params.id, USER_ROLE)
-    res.status(200).json('Done')
+    res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(400, 'User not found'))
+      return next(new ApiError(404, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -71,10 +71,10 @@ exports.deleteUsers = async (req, res, next) => {
     const { forceDelete } = req.query
     const isForceDelete = forceDelete === 'true'
     const users = await deleteUsers(req.body, isForceDelete)
-    res.status(200).json('Done')
+    res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(400, 'User not found'))
+      return next(new ApiError(404, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -88,7 +88,7 @@ exports.deleteHotel = async (req, res, next) => {
     res.status(200).send(hotel)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(400, 'Hotel not found'))
+      return next(new ApiError(404, 'Hotel not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }
@@ -97,10 +97,10 @@ exports.deleteHotel = async (req, res, next) => {
 exports.verifyUser = async (req, res, next) => {
   try {
     const user = await verifyUser(req.params.id)
-    res.status(200).json('Done')
+    res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(400, 'User not found'))
+      return next(new ApiError(404, 'User not found'))
     }
     next(new ApiError(error.statusCode, error.message))
   }

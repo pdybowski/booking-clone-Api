@@ -19,7 +19,7 @@ exports.acceptUserToOwner = async (id, role) => {
   const user = await User.updateOne({ _id: id }, { role: role })
 
   if (!user) {
-    throw new ApiError(400, 'User not found')
+    throw new ApiError(404, 'User not found')
   }
 
   return user
@@ -32,7 +32,7 @@ exports.deleteOwner = async (id, role) => {
   })
 
   if (!user) {
-    throw new ApiError(400, 'Wrong ID or user is not a hotel owner')
+    throw new ApiError(404, 'Hotel owner with provided id not found')
   }
 
   return user
@@ -44,7 +44,7 @@ exports.deleteUser = async (id, role) => {
     role: role,
   })
   if (!user) {
-    throw new ApiError(400, 'Wrong ID')
+    throw new ApiError(404, 'User not found')
   }
 }
 
@@ -52,7 +52,7 @@ exports.deleteUsers = async (users, isForceDelete) => {
   for (const id of users) {
     const user = await User.findById(id)
     if (!user) {
-      throw new ApiError(400, 'User not found')
+      throw new ApiError(404, 'User not found')
     }
     const reservation = await Reservation.find({ user: id })
     if (reservation.length > 0 && isForceDelete) {
@@ -69,16 +69,14 @@ exports.deleteHotel = async (hotelId, isForceDelete) => {
   const reservation = await Reservation.find({ hotel: hotelId })
   const hotel = await Hotel.findById(hotelId)
   if (!hotel) {
-    throw new ApiError(400, 'Hotel not found')
+    throw new ApiError(404, 'Hotel not found')
   }
-  console.log(reservation)
   if (reservation.length > 0 && isForceDelete) {
     await Reservation.deleteMany({ hotel: hotelId })
     await Hotel.findByIdAndDelete(hotelId)
     //sms
   }
   if (reservation.length > 0 && !isForceDelete) {
-    console.log('se')
     throw new ApiError(400, 'Remove reservation first')
   }
   await Hotel.findByIdAndDelete(hotelId)
@@ -87,6 +85,6 @@ exports.deleteHotel = async (hotelId, isForceDelete) => {
 exports.verifyUser = async (id) => {
   const user = await User.findOneAndUpdate({ _id: id }, { isVerified: true })
   if (!user) {
-    throw new ApiError(400, 'User not found')
+    throw new ApiError(404, 'User not found')
   }
 }
