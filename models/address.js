@@ -1,7 +1,6 @@
-const Joi = require('joi')
 const mongoose = require('mongoose')
 
-const adressSchema = new mongoose.Schema({
+const addressSchema = new mongoose.Schema({
   country: {
     type: String,
     required: true,
@@ -11,7 +10,7 @@ const adressSchema = new mongoose.Schema({
     required: true,
   },
   zipcode: {
-    type: Number,
+    type: String,
     required: true,
   },
   street: {
@@ -24,19 +23,11 @@ const adressSchema = new mongoose.Schema({
   },
 })
 
-const Address = mongoose.model('Address', adressSchema)
+addressSchema.methods.toJSON = function () {
+  const obj = this.toObject()
+  delete obj.__v
 
-const validateAddress = (address) => {
-  const schema = Joi.object({
-    country: Joi.string().min(0).required(),
-    city: Joi.string().min(0).required(),
-    zipcode: Joi.number.min(0).required(),
-    street: Joi.string().min(0).required(),
-    buildingNumber: Joi.number.min(1).required(),
-  })
-
-  return schema.validate(address)
+  return obj
 }
 
-exports.Address = Address
-exports.validate = validateAddress
+exports.addressSchema = addressSchema

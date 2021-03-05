@@ -1,4 +1,3 @@
-const Joi = require('joi')
 const mongoose = require('mongoose')
 
 const roomSchema = new mongoose.Schema({
@@ -23,26 +22,15 @@ const roomSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
+    default: '',
   },
 })
 
-const Room = mongoose.model('Room', roomSchema)
+roomSchema.methods.toJSON = function () {
+  const obj = this.toObject()
+  delete obj.__v
 
-const validateRoom = (room) => {
-  const schema = Joi.object({
-    hotelId: Joi.objectId().required(),
-    beds: {
-      single: Joi.number.min(0),
-      double: Joi.number.min(0),
-    },
-    price: Joi.number.min(10),
-    description: Joi.string(),
-  })
-
-  return schema.validate(room)
+  return obj
 }
 
-exports.validate = validateRoom
-exports.Room = Room
 exports.roomSchema = roomSchema
