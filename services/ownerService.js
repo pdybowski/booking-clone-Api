@@ -7,20 +7,22 @@ const { calculateDays } = require('../helpers/calculateDays')
 exports.addRoom = async (req) => {
   let hotel = await Hotel.findOne({ _id: req.params.hotelId })
   if (!hotel) throw new ApiError(404, 'Hotel with provided ID was not found.')
+  if (hotel.ownerId !== req.user._id) throw new ApiError(403, 'Forbidden')
 
-  const rooms = req.body.map((item) => 
-      ({
-        roomNumber: item.roomNumber,
-        beds: {
-          single: item.beds.single,
-          double: item.beds.double,
-        },
-        price: item.price,
-        description: item.description
-    })
+  const rooms = req.body.map((item) => ({
+    roomNumber: item.roomNumber,
+    beds: {
+      single: item.beds.single,
+      double: item.beds.double,
+    },
+    price: item.price,
+    description: item.description,
+  }))
+
+  await Hotel.updateOne(
+    { _id: req.params.hotelId },
+    { $push: { rooms: { $each: rooms } } }
   )
-
-  await Hotel.updateOne({ _id: req.params.hotelId }, { $push: { "rooms": { $each: rooms } } })
   hotel = await Hotel.findOne({ _id: req.params.hotelId })
 
   return hotel
