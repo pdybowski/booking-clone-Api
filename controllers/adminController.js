@@ -9,7 +9,7 @@ const {
   deleteUser,
   deleteUsers,
   deleteHotel,
-  verifyUser,
+  verifyOwner,
 } = require('../services/adminService')
 
 exports.getUsers = async (req, res, next) => {
@@ -23,7 +23,7 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getHotelOwners = async (req, res, next) => {
   try {
-    const owners = await getHotelOwners(HOTEL_OWNER_ROLE)
+    const owners = await getHotelOwners()
     res.status(200).send(owners)
   } catch (error) {
     next(new ApiError(400, 'Owners data cannot be fetched.'))
@@ -32,8 +32,8 @@ exports.getHotelOwners = async (req, res, next) => {
 
 exports.acceptUserToOwner = async (req, res, next) => {
   try {
-    await acceptUserToOwner(req.params.id, HOTEL_OWNER_ROLE)
-    res.status(200).json('Done')
+    await acceptUserToOwner(req.params.id)
+    res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(400, 'User not found'))
@@ -44,8 +44,8 @@ exports.acceptUserToOwner = async (req, res, next) => {
 
 exports.deleteOwner = async (req, res, next) => {
   try {
-    const owner = await deleteOwner(req.params.id, HOTEL_OWNER_ROLE)
-    res.status(200).json('Done')
+    const owner = await deleteOwner(req.params.id)
+    res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
       return next(new ApiError(400, 'User not found'))
@@ -56,7 +56,7 @@ exports.deleteOwner = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   try {
-    const user = await deleteUser(req.params.id, USER_ROLE)
+    const user = await deleteUser(req.params.id)
     res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
@@ -94,9 +94,9 @@ exports.deleteHotel = async (req, res, next) => {
   }
 }
 
-exports.verifyUser = async (req, res, next) => {
+exports.verifyOwner = async (req, res, next) => {
   try {
-    const user = await verifyUser(req.params.id)
+    const user = await verifyOwner(req.params.id)
     res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {

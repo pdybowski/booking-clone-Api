@@ -2,33 +2,32 @@ const ApiError = require('../helpers/apiError')
 const User = require('../models/user')
 const Reservation = require('../models/reservation')
 const { Hotel } = require('../models/hotel')
+const { HOTEL_OWNER_ROLE, USER_ROLE } = require('../models/roles')
 
 exports.getUsers = async (userRole, hotelOwnerRole) => {
-  const users = await User.find({ role: { $in: [userRole, hotelOwnerRole] } })
+  const users = await User.find({ role: { $in: [ userRole, hotelOwnerRole ] } })
 
   return users
 }
 
-exports.getHotelOwners = async (role) => {
-  const owners = await User.find({ role: role })
+exports.getHotelOwners = async () => {
+  const owners = await User.find({ role: HOTEL_OWNER_ROLE })
 
   return owners
 }
 
-exports.acceptUserToOwner = async (id, role) => {
-  const user = await User.updateOne({ _id: id }, { role: role })
+exports.acceptUserToOwner = async (id) => {
+  const user = await User.updateOne({ _id: id }, { role: HOTEL_OWNER_ROLE })
 
-  if (!user) {
     throw new ApiError(404, 'User not found')
-  }
 
   return user
 }
 
-exports.deleteOwner = async (id, role) => {
+exports.deleteOwner = async (id) => {
   const user = await User.findOneAndDelete({
     _id: id,
-    role: role,
+    role: HOTEL_OWNER_ROLE,
   })
 
   if (!user) {
@@ -38,10 +37,10 @@ exports.deleteOwner = async (id, role) => {
   return user
 }
 
-exports.deleteUser = async (id, role) => {
+exports.deleteUser = async (id) => {
   const user = await User.findOneAndDelete({
     _id: id,
-    role: role,
+    role: USER_ROLE,
   })
   if (!user) {
     throw new ApiError(404, 'User not found')
@@ -82,9 +81,9 @@ exports.deleteHotel = async (hotelId, isForceDelete) => {
   await Hotel.findByIdAndDelete(hotelId)
 }
 
-exports.verifyUser = async (id) => {
-  const user = await User.findOneAndUpdate({ _id: id }, { isVerified: true })
+exports.verifyOwner = async (id) => {
+  const user = await User.findOneAndUpdate({ _id: id, role: HOTEL_OWNER_ROLE }, { isVerified: true })
   if (!user) {
-    throw new ApiError(404, 'User not found')
+    throw new ApiError(404, 'Hotel owner not found')
   }
 }

@@ -15,7 +15,7 @@ router.put('/owner/accept/:id', async (req, res, next) => {
 })
 
 router.put('/owner/status/:id', async (req, res, next) => {
-  adminController.verifyUser(req, res, next)
+  adminController.verifyOwner(req, res, next)
 })
 
 router.delete('/owner/:id', async (req, res, next) => {
