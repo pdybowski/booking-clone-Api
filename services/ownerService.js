@@ -5,27 +5,25 @@ const Reservation = require('../models/reservation')
 const { calculateDays } = require('../helpers/calculateDays')
 
 exports.addRoom = async (req) => {
-  const hotel = await Hotel.find({ _id: req.params.hotelId })
-  const hotelId = req.params.hotelId
-  if (!hotel) throw new ApiError(400, 'Hotel with provided ID was not found.')
+  let hotel = await Hotel.findOne({ _id: req.params.hotelId })
+  if (!hotel) throw new ApiError(404, 'Hotel with provided ID was not found.')
 
-  const rooms = req.body.map((item) => {
-    const room = {
-      roomNumber: item.roomNumber,
-      beds: {
-        single: item.beds.single,
-        double: item.beds.double,
-      },
-      price: item.price,
-      description: item.description,
-    }
+  const rooms = req.body.map((item) => 
+      ({
+        roomNumber: item.roomNumber,
+        beds: {
+          single: item.beds.single,
+          double: item.beds.double,
+        },
+        price: item.price,
+        description: item.description
+    })
+  )
 
-    return room
-  })
+  await Hotel.updateOne({ _id: req.params.hotelId }, { $push: { "rooms": { $each: rooms } } })
+  hotel = await Hotel.findOne({ _id: req.params.hotelId })
 
-  await Hotel.updateOne({ _id: hotelId }, { $push: { rooms: room } })
-
-  return room
+  return hotel
 }
 
 exports.getHotels = async (data) => {
