@@ -19,9 +19,10 @@ exports.getFreeRooms = async (req, res, next) => {
 
 exports.getHotels = async (req, res, next) => {
   try {
-    const hotels = await getHotels()
+    const hotels = await getHotels(req)
     res.status(200).send(hotels)
   } catch (error) {
+    console.log(error)
     next(new ApiError(400, 'Hotels cannot be fetched'))
   }
 }
