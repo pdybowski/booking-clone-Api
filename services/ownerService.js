@@ -4,11 +4,13 @@ const { Hotel } = require('../models/hotel')
 const Reservation = require('../models/reservation')
 const { calculateDays } = require('../helpers/calculateDays')
 const { isObjIdEqualToMongoId } = require('../helpers/isObjIdEqualToMongoId')
+const { notifyUser } = require('./notifyUser')
 
 exports.addRoom = async (req) => {
   let hotel = await Hotel.findOne({ _id: req.params.hotelId })
-  if (!hotel) throw new ApiError(404, 'Hotel with provided ID was not found.')  
-  if (!isObjIdEqualToMongoId(req.user._id, hotel.ownerId)) throw new ApiError(403, 'Forbidden')
+  if (!hotel) throw new ApiError(404, 'Hotel with provided ID was not found.')
+  if (!isObjIdEqualToMongoId(req.user._id, hotel.ownerId))
+    throw new ApiError(403, 'Forbidden')
 
   const rooms = req.body.map((item) => ({
     roomNumber: item.roomNumber,
@@ -52,23 +54,51 @@ exports.updateHotel = async (id, data) => {
   return hotel
 }
 
-exports.deleteHotel = async (ownerId, id, isForceDelete) => {
+exports.deleteHotel = async (owner, id, isForceDelete) => {
   const hotel = await Hotel.findById(id)
-  if (hotel.ownerId !== ownerId) throw new ApiError(403, 'Forbidden')
-  const reservation = await Reservation.find({ hotel: id })
+  if (toString(hotel.ownerId) !== toString(owner._id)) {
+    throw new ApiError(403, 'Forbidden')
+  }
+  const reservations = await Reservation.find({ hotel: id })
 
-  if (reservation.length > 0 && !isForceDelete) {
+  if (reservations.length > 0 && !isForceDelete) {
     throw new ApiError(
       400,
       'Remove reservations first or set flag force to true, please'
     )
   }
 
-  if (reservation.length > 0 && isForceDelete) {
+  if (reservations.length > 0 && isForceDelete) {
+    reservations.forEach(async ({ user, hotel }) => {
+      const { name } = await Hotel.findById(hotel)
+      notifyUser(
+        user.isSmsAllowed,
+        user.email,
+        'Cancelled reservation',
+        'reservationRemoved',
+        user.firstName,
+        name,
+        'BookingCloneApi',
+        user.phoneNumber,
+        'Your reservation has been cancelled'
+      )
+    })
     await Reservation.deleteMany({ hotel: id })
   }
 
   await Hotel.findByIdAndDelete(id)
+
+  notifyUser(
+    owner.isSmsAllowed,
+    owner.email,
+    'Hotel removed',
+    'hotelRemoved',
+    owner.firstName,
+    hotel.name,
+    'BookingCloneApi',
+    owner.phoneNumber,
+    `You removed your hotel: ${hotel.name}`
+  )
 }
 
 exports.deleteReservation = async (id) => {
