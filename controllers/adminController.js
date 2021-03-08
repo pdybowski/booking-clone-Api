@@ -96,7 +96,6 @@ exports.deleteHotel = async (req, res, next) => {
 
 exports.verifyOwner = async (req, res, next) => {
   try {
-    console.log('XD')
     const user = await verifyOwner(req.params.id)
     res.sendStatus(200)
   } catch (error) {
