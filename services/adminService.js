@@ -38,8 +38,6 @@ exports.deleteOwner = async (id) => {
   if (!user) {
     throw new ApiError(404, 'Hotel owner with provided id not found')
   }
-
-  return user
 }
 
 exports.deleteUser = async (id) => {
