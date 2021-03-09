@@ -7,8 +7,9 @@ const { isObjIdEqualToMongoId } = require('../helpers/isObjIdEqualToMongoId')
 
 exports.addRoom = async (req) => {
   let hotel = await Hotel.findOne({ _id: req.params.hotelId })
-  if (!hotel) throw new ApiError(404, 'Hotel with provided ID was not found.')  
-  if (!isObjIdEqualToMongoId(req.user._id, hotel.ownerId)) throw new ApiError(403, 'Forbidden')
+  if (!hotel) throw new ApiError(404, 'Hotel with provided ID was not found.')
+  if (!isObjIdEqualToMongoId(req.user._id, hotel.ownerId))
+    throw new ApiError(403, 'Forbidden')
 
   const rooms = req.body.map((item) => ({
     roomNumber: item.roomNumber,
@@ -69,22 +70,4 @@ exports.deleteHotel = async (ownerId, id, isForceDelete) => {
   }
 
   await Hotel.findByIdAndDelete(id)
-}
-
-exports.deleteReservation = async (id) => {
-  const reservation = await Reservation.findByIdAndDelete(id)
-  if (!reservation) {
-    throw new ApiError(404, 'Reservation with given ID was not found')
-  }
-
-  const days = calculateDays(reservation.startDay)
-
-  if (reservation.isPaid || days <= 3) {
-    throw new ApiError(
-      400,
-      'Can not delete reservation; reservation is paid or or there is less than 3 days to start the stay in the hotel'
-    )
-  }
-
-  return reservation
 }
