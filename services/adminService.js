@@ -58,21 +58,30 @@ exports.deleteUsers = async (users, isForceDelete) => {
     }
     const reservations = await Reservation.find({ user: id })
     if (reservations.length > 0 && isForceDelete) {
-      await Reservation.deleteMany({ user: id })
-      reservations.forEach(async ({ user, hotel }) => {
-        const { name } = await Hotel.findById(hotel)
+      const recivers = []
+      reservations.forEach(({ user }) => {
+        const userId = user.toString()
+        recivers.push(userId)
+      })
+
+      const uniqueUsers = [...new Set(recivers)]
+      uniqueUsers.forEach(async (uniqueUser) => {
+        const user = await User.findById(uniqueUser)
         notifyUser(
           user.isSmsAllowed,
           user.email,
-          'Cancelled reservation',
-          'reservationRemoved',
+          'Account Deleted',
+          'userDeletedAndReservationsCanceled',
           user.firstName,
-          name,
+          null,
           'BookingCloneApi',
           user.phoneNumber,
-          'Your reservation has been cancelled'
+          'Your account has been deleted by admin, your reservations has been cancelled'
         )
       })
+      await Reservation.deleteMany({ user: id })
+      await User.findByIdAndDelete(id)
+      return
     }
     if (reservations.length > 0 && !isForceDelete) {
       throw new ApiError(400, 'Remove reservations first')

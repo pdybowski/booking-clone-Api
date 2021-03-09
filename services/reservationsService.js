@@ -196,7 +196,7 @@ const saveReservation = async (user, data) => {
     hotel.name,
     'BookingCloneApi',
     user.phoneNumber,
-    `You booked your reservation at: ${hotel.name}`
+    `You successfully booked your reservation at: ${hotel.name}`
   )
 
   return true

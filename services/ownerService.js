@@ -1,5 +1,6 @@
 const ApiError = require('../helpers/apiError')
 const { Hotel } = require('../models/hotel')
+const User = require('../models/user')
 
 const Reservation = require('../models/reservation')
 const { calculateDays } = require('../helpers/calculateDays')
@@ -69,18 +70,25 @@ exports.deleteHotel = async (owner, id, isForceDelete) => {
   }
 
   if (reservations.length > 0 && isForceDelete) {
-    reservations.forEach(async ({ user, hotel }) => {
-      const { name } = await Hotel.findById(hotel)
+    const recivers = []
+    reservations.forEach(({ user }) => {
+      const userId = user.toString()
+      recivers.push(userId)
+    })
+
+    const uniqueUsers = [...new Set(recivers)]
+    uniqueUsers.forEach(async (uniqueUser) => {
+      const user = await User.findById(uniqueUser)
       notifyUser(
         user.isSmsAllowed,
         user.email,
-        'Cancelled reservation',
+        'Reservations removed',
         'reservationRemoved',
         user.firstName,
-        name,
+        hotel.name,
         'BookingCloneApi',
         user.phoneNumber,
-        'Your reservation has been cancelled'
+        'Your reservations has been cancelled'
       )
     })
     await Reservation.deleteMany({ hotel: id })
