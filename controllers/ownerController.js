@@ -39,7 +39,7 @@ exports.addHotel = async (req, res, next) => {
 
 exports.updateHotel = async (req, res, next) => {
   try {
-    const hotel = await updateHotel(req.params.id, req.body)
+    const hotel = await updateHotel(req.params.id, req.body, req.user._id)
     res.status(200).send(hotel)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
@@ -66,7 +66,7 @@ exports.deleteHotel = async (req, res, next) => {
 
 exports.deleteReservation = async (req, res, next) => {
   try {
-    deleteReservation(req.params.id)
+    deleteReservation(req.params.id, req)
     res.sendStatus(200)
   } catch (error) {
     if (error instanceof mongoose.Error.CastError) {
