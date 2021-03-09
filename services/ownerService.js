@@ -57,7 +57,8 @@ exports.updateHotel = async (id, data) => {
 
 exports.deleteHotel = async (owner, id, isForceDelete) => {
   const hotel = await Hotel.findById(id)
-  if (toString(hotel.ownerId) !== toString(owner._id)) {
+
+  if (!isObjIdEqualToMongoId(hotel.ownerId, owner._id)) {
     throw new ApiError(403, 'Forbidden')
   }
   const reservations = await Reservation.find({ hotel: id })
