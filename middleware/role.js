@@ -7,7 +7,7 @@ const hasUserAccess = (req, next, role) => {
     const user = getUserFromRequest(req)
 
     if (user.role === HOTEL_OWNER_ROLE && !user.isVerified) {
-      throw new ApiError(403, 'Hotel owner not verified yet.')
+      throw new ApiError(403, 'Hotel owner is not verified yet.')
     }
 
     if (user.role === role) {
