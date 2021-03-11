@@ -23,24 +23,24 @@ router.put('/verifyHotelOwner/:id', async (req, res, next) => {
 })
 
 // remove owner
-router.delete('/deleteHotelOwner/:id', async (req, res, next) => {
+router.delete('/hotelOwner/:id', async (req, res, next) => {
   adminController.deleteOwner(req, res, next)
 })
 
 // remove user
-router.delete('/deleteUser/:id', async (req, res, next) => {
+router.delete('/users/:id', async (req, res, next) => {
   adminController.deleteUser(req, res, next)
 })
 
 // remove many users
 // query: forceDelete
-router.post('/deleteManyUsers', async (req, res, next) => {
+router.delete('/users', async (req, res, next) => {
   adminController.deleteUsers(req, res, next)
 })
 
 // remove hotel
 // query: forceDelete
-router.delete('/deleteHotel/:id', async (req, res, next) => {
+router.delete('/hotels/:id', async (req, res, next) => {
   adminController.deleteHotel(req, res, next)
 })
 
