@@ -7,9 +7,11 @@ const {
   getHotelIdsForOwner,
   getHotelOwnerId,
 } = require('./hotelsService')
+const { Hotel } = require('../models/hotel')
 const { addDaysToDate, formatDate } = require('../helpers/date')
-const ApiError = require('../helpers/apiError')
+const { ForbiddenError, BadRequestError } = require('../helpers/apiError')
 const { isObjIdEqualToMongoId } = require('../helpers/isObjIdEqualToMongoId')
+const { notifyUser } = require('./notifyUser')
 
 const CANCELLATION_DATE = 3
 
@@ -19,19 +21,19 @@ const isRoomAvailable = async (hotelId, roomId, startDate, endDate) => {
     room: roomId,
     $or: [
       // start after startDate and after before endDate --- |
-      { 
+      {
         startDate: { $lt: startDate, $lt: endDate },
-        endDate: { $gt: startDate, $lt: endDate }
+        endDate: { $gt: startDate, $lt: endDate },
       },
       // between some reservation time
-      { 
+      {
         startDate: { $lte: startDate, $lte: endDate },
-        endDate: { $gte: startDate, $gte: endDate }
+        endDate: { $gte: startDate, $gte: endDate },
       },
       // start before startDate and end before endDate | ---
       {
         startDate: { $gt: startDate, $lt: endDate },
-        endDate: { $gt: startDate, $lt: endDate }
+        endDate: { $gt: startDate, $lt: endDate },
       },
     ],
   }))
@@ -150,13 +152,11 @@ const getReservations = async (user) => {
 const saveReservation = async (user, data) => {
   if (user.isStandardUser) {
     if (!isObjIdEqualToMongoId(user._id, data.user)) {
-      throw new ApiError(403, 'You are not allowed to create a reservation.')
+      throw new ForbiddenError('You are not allowed to create a reservation.')
     }
   } else {
-    throw new ApiError(403, 'You are not allowed to create a reservation.')
+    throw new ForbiddenError('You are not allowed to create a reservation.')
   }
-
-  const defaultErrorMessage = 'Reservation failed.'
 
   data.startDate = formatDate(data.startDate, true)
   data.endDate = formatDate(data.endDate, true)
@@ -164,26 +164,38 @@ const saveReservation = async (user, data) => {
   const { hotel, room, people, startDate, endDate } = data
 
   if (!(await hotelExists(hotel))) {
-    throw new ApiError(404, defaultErrorMessage)
+    throw new BadRequestError('Hotel does not exist.')
   }
 
   if (!(await roomExists(hotel, room))) {
-    throw new ApiError(404, defaultErrorMessage)
+    throw new BadRequestError('Room does not exist.')
   }
 
   if (!(await isRoomAvailable(hotel, room, startDate, endDate))) {
-    throw new ApiError(404, 'The room is not available.')
+    throw new BadRequestError('The room is not available.')
   }
 
   const guests = await numberOfGuestsInRoom(hotel, room)
   const numberOfPersons = +people.adults + +people.children
 
   if (numberOfPersons > guests) {
-    throw new ApiError(404, 'Exceeded number of visitors.')
+    throw new BadRequestError('Exceeded number of visitors.')
   }
 
   const reservation = new Reservation(data)
   await reservation.save()
+
+  notifyUser(
+    user.isSmsAllowed,
+    user.email,
+    'Reservation booked',
+    'reservation',
+    `${user.firstName} ${user.lastName}`,
+    hotel.name,
+    'BookingCloneApi',
+    user.phoneNumber,
+    `You successfully booked your reservation at: ${hotel.name}`
+  )
 
   return true
 }
@@ -192,32 +204,50 @@ const cancelReservation = async (user, reservationId) => {
   const reservation = await Reservation.findOne({ _id: reservationId })
 
   if (!reservation) {
-    throw new ApiError(404, 'Reservation not found.')
+    throw new BadRequestError('Reservation not found.')
   }
 
   if (user.isStandardUser) {
     if (!isObjIdEqualToMongoId(user._id, reservation.user)) {
-      throw new ApiError(403, 'You are not allowed to cancel this reservation.')
+      throw new ForbiddenError(
+        'You are not allowed to cancel this reservation.'
+      )
     }
   } else if (user.isHotelOwner) {
     const hotelOwnerId = await getHotelOwnerId(reservation.hotel)
 
     if (!hotelOwnerId) {
-      throw new ApiError(400, 'An error occurred while cancelling reservation.')
+      throw new BadRequestError('An error occurred while checking hotel owner.')
     }
 
     if (!isObjIdEqualToMongoId(user._id, hotelOwnerId)) {
-      throw new ApiError(403, 'You are not allowed to cancel this reservation.')
+      throw new ForbiddenError(
+        'You are not allowed to cancel this reservation.'
+      )
     }
   } else {
-    throw new ApiError(403, 'You are not allowed to cancel this reservation.')
+    throw new ForbiddenError('You are not allowed to cancel this reservation.')
   }
 
   if (!canReservationBeCancelled(reservation)) {
-    throw new ApiError(400, 'The reservation cannot be cancelled.')
+    throw new BadRequestError('The reservation cannot be cancelled.')
   }
 
   const deletedReservation = await reservation.delete()
+
+  const hotel = await Hotel.findById(reservation.hotel)
+
+  notifyUser(
+    user.isSmsAllowed,
+    user.email,
+    'Cancelled reservation',
+    'reservationRemoved',
+    `${user.firstName} ${user.lastName}`,
+    hotel.name,
+    'BookingCloneApi',
+    user.phoneNumber,
+    'Your reservation has been cancelled'
+  )
 
   return deletedReservation !== null
 }

@@ -1,12 +1,9 @@
-const mongoose = require('mongoose')
-const ApiError = require('../helpers/apiError')
 const {
   addRoom,
   getHotels,
   addHotel,
   updateHotel,
   deleteHotel,
-  deleteReservation,
 } = require('../services/ownerService')
 
 exports.addRoom = async (req, res, next) => {
@@ -14,7 +11,7 @@ exports.addRoom = async (req, res, next) => {
     const hotel = await addRoom(req)
     res.status(200).send(hotel)
   } catch (error) {
-    next(new ApiError(400, 'Can not add a room.'))
+    next(error)
   }
 }
 
@@ -23,7 +20,7 @@ exports.getHotels = async (req, res, next) => {
     const hotels = await getHotels(req.user._id)
     res.status(200).send(hotels)
   } catch (error) {
-    next(new ApiError(400, 'Hotel data cannot be fetched.'))
+    next(error)
   }
 }
 
@@ -33,7 +30,7 @@ exports.addHotel = async (req, res, next) => {
     const hotel = await addHotel(req.body)
     res.status(200).send(hotel)
   } catch (error) {
-    next(new ApiError(400, error.message))
+    next(error)
   }
 }
 
@@ -42,11 +39,7 @@ exports.updateHotel = async (req, res, next) => {
     const hotel = await updateHotel(req.params.id, req.body, req.user._id)
     res.status(200).send(hotel)
   } catch (error) {
-    if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'Hotel not found.'))
-    }
-
-    next(new ApiError(400, 'Hotel data cannot be fetched.'))
+    next(error)
   }
 }
 
@@ -69,10 +62,6 @@ exports.deleteReservation = async (req, res, next) => {
     deleteReservation(req.params.id, req)
     res.sendStatus(200)
   } catch (error) {
-    if (error instanceof mongoose.Error.CastError) {
-      return next(new ApiError(404, 'Reservation not found.'))
-    }
-
-    next(new ApiError(400, 'Reservation data cannot be fetched.'))
+    next(error)
   }
 }
