@@ -3,16 +3,23 @@ const { sendMail } = require('./email/index')
 
 function notifyUser(
   user,
-  subjectEmail,
-  viewEmail,
-  hotelName,
-  from,
-  textSms
+  emailData = {
+    emailSubject,
+    templateView,
+  },
+  smsData = {
+    from = "BookingCloneApi",
+    smsMsg
+  }
 ) {
   const { isSmsAllowed, email, phoneNumber } = user
-  sendMail(email, subjectEmail, viewEmail, user.fullName, hotelName)
-  if (isSmsAllowed) {
-    sendSms(from, phoneNumber, textSms)
+  try {
+    sendMail(emailData, email, user.fullName)
+    if (isSmsAllowed) {
+      sendSms(smsData, phoneNumber)
+    }
+  } catch (error) {
+    console.error(error)
   }
 }
 

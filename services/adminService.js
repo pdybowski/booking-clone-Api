@@ -1,4 +1,4 @@
-const ApiError = require('../helpers/apiError')
+const { BadRequestError } = require('../helpers/apiError')
 const User = require('../models/user')
 const Reservation = require('../models/reservation')
 const { Hotel } = require('../models/hotel')
@@ -23,7 +23,7 @@ exports.acceptUserToOwner = async (id) => {
     { role: HOTEL_OWNER_ROLE }
   )
   if (!user) {
-    throw new ApiError(404, 'User not found')
+    throw new BadRequestError('User not found')
   }
 
   return user
@@ -36,7 +36,7 @@ exports.deleteOwner = async (id) => {
   })
 
   if (!user) {
-    throw new ApiError(404, 'Hotel owner with provided id not found')
+    throw new BadRequestError('Hotel owner with provided id not found')
   }
 }
 
@@ -46,7 +46,7 @@ exports.deleteUser = async (id) => {
     role: USER_ROLE,
   })
   if (!user) {
-    throw new ApiError(404, 'User not found')
+    throw new BadRequestError('User not found')
   }
 }
 
@@ -54,7 +54,7 @@ exports.deleteUsers = async (users, isForceDelete) => {
   for (const id of users) {
     const user = await User.findById(id)
     if (!user) {
-      throw new ApiError(404, 'User not found')
+      throw new BadRequestError('User not found')
     }
     const reservations = await Reservation.find({ user: id })
     if (reservations.length > 0 && isForceDelete) {
@@ -69,11 +69,13 @@ exports.deleteUsers = async (users, isForceDelete) => {
         const user = await User.findById(uniqueUser)
         notifyUser(
           user,
-          'Account Deleted',
-          'userDeletedAndReservationsCanceled',
-          null,
-          'BookingCloneApi',
-          'Your account has been deleted by admin, your reservations has been cancelled'
+          {
+            emailSubject: 'Account Deleted',
+            templateView: 'userDeletedAndReservationsCanceled.html'
+          },
+          {
+            smsMsg: 'Your account has been deleted by admin, your reservations has been cancelled'
+          }
         )
       })
       await Reservation.deleteMany({ user: id })
@@ -81,16 +83,18 @@ exports.deleteUsers = async (users, isForceDelete) => {
       return
     }
     if (reservations.length > 0 && !isForceDelete) {
-      throw new ApiError(400, 'Remove reservations first')
+      throw new BadRequestError('Remove reservations first')
     }
     await User.findByIdAndDelete(id)
     notifyUser(
       user,
-      'Account Deleted',
-      'remove',
-      null,
-      'BookingCloneApi',
-      'Your account has been deleted by admin'
+      {
+        emailSubject: 'Account Deleted',
+        templateView: 'remove.html',
+      },
+      {
+        smsMsg: 'Your account has been deleted by admin'
+      }
     )
   }
 }
@@ -99,7 +103,7 @@ exports.deleteHotel = async (hotelId, isForceDelete) => {
   const reservations = await Reservation.find({ hotel: hotelId })
   const hotel = await Hotel.findById(hotelId)
   if (!hotel) {
-    throw new ApiError(404, 'Hotel not found')
+    throw new BadRequestError('Hotel not found')
   }
   if (reservations.length > 0 && isForceDelete) {
     await Reservation.deleteMany({ hotel: hotelId })
@@ -108,16 +112,19 @@ exports.deleteHotel = async (hotelId, isForceDelete) => {
       const { name } = await Hotel.findById(hotel)
       notifyUser(
         user,
-        'Cancelled reservation',
-        'reservationRemoved',
-        name,
-        'BookingCloneApi',
-        'Your reservation has been cancelled'
+        {
+          emailSubject: 'Cancelled reservation',
+          templateView: 'reservationRemoved.html',
+          hotelName: name,
+        },
+        {
+          smsMsg: 'Your reservation has been cancelled'
+        }
       )
     })
   }
   if (reservations.length > 0 && !isForceDelete) {
-    throw new ApiError(400, 'Remove reservation first')
+    throw new BadRequestError('Remove reservation first')
   }
   await Hotel.findByIdAndDelete(hotelId)
 }
@@ -128,16 +135,18 @@ exports.verifyOwner = async (id) => {
     { isVerified: true }
   )
   if (!user) {
-    throw new ApiError(404, 'Hotel owner not found')
+    throw new BadRequestError('Hotel owner not found')
   }
 
   notifyUser(
     user,
-    'Veryfication successful',
-    'owner',
-    null,
-    'BookingCloneApi',
-    'You are now veryfied as a Hotel Owner. Your hotels are now available'
+    {
+      emailSubject: 'Veryfication successful',
+      templateView: 'owner.html',
+    },
+    {
+      smsMsg: 'You are now veryfied as a Hotel Owner. Your hotels are now available'
+    }
   )
   return user
 }

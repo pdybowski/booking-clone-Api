@@ -1,17 +1,17 @@
-const ApiError = require('../helpers/apiError')
+const { BadRequestError, ForbiddenError } = require('../helpers/apiError')
 const { Hotel } = require('../models/hotel')
 const User = require('../models/user')
 
 const Reservation = require('../models/reservation')
-const { calculateDays } = require('../helpers/calculateDays')
 const { isObjIdEqualToMongoId } = require('../helpers/isObjIdEqualToMongoId')
 const { notifyUser } = require('./notifyUser')
 
 exports.addRoom = async (req) => {
-  let hotel = await Hotel.findOne({ _id: req.params.hotelId })
-  if (!hotel) throw new ApiError(404, 'Hotel with provided ID was not found.')
+  const { id: hotelId } = req.params.id
+  let hotel = await Hotel.findOne({ _id: hotelId })
+  if (!hotel) throw new BadRequestError('Hotel with provided ID was not found.')
   if (!isObjIdEqualToMongoId(req.user._id, hotel.ownerId))
-    throw new ApiError(403, 'Forbidden')
+    throw new ForbiddenError('Forbidden')
 
   const rooms = req.body.map((item) => ({
     roomNumber: item.roomNumber,
@@ -24,10 +24,10 @@ exports.addRoom = async (req) => {
   }))
 
   await Hotel.updateOne(
-    { _id: req.params.hotelId },
+    { _id: hotelId },
     { $push: { rooms: { $each: rooms } } }
   )
-  hotel = await Hotel.findOne({ _id: req.params.hotelId })
+  hotel = await Hotel.findOne({ _id: hotelId })
 
   return hotel
 }
@@ -48,7 +48,7 @@ exports.updateHotel = async (id, data) => {
   const hotelUpdate = await Hotel.findByIdAndUpdate(id, data)
 
   if (!hotelUpdate) {
-    throw new ApiError(404, 'Hotel not found.')
+    throw new BadRequestError('Hotel not found.')
   }
   const hotel = await Hotel.findById(id)
 
@@ -59,14 +59,13 @@ exports.deleteHotel = async (owner, id, isForceDelete) => {
   const hotel = await Hotel.findById(id)
 
   if (!isObjIdEqualToMongoId(hotel.ownerId, owner._id)) {
-    throw new ApiError(403, 'Forbidden')
+    throw new ForbiddenError('Forbidden')
   }
   const reservations = await Reservation.find({ hotel: id })
 
   if (reservations.length > 0 && !isForceDelete) {
-    throw new ApiError(
-      400,
-      'Remove reservations first or set flag force to true, please'
+    throw new BadRequestError(
+      'Remove reservations first or check `force delete` flag'
     )
   }
 
@@ -82,11 +81,14 @@ exports.deleteHotel = async (owner, id, isForceDelete) => {
       const user = await User.findById(uniqueUser)
       notifyUser(
         user,
-        'Reservations removed',
-        'reservationRemoved',
-        hotel.name,
-        'BookingCloneApi',
-        'Your reservations has been cancelled'
+        {
+          emailSubject: 'Reservations removed',
+          templateView: 'reservationRemoved.html',
+          hotelName: hotel.name,
+        },
+        {
+          smsMsg: 'Your reservations has been cancelled'
+        }
       )
     })
     await Reservation.deleteMany({ hotel: id })
@@ -96,10 +98,13 @@ exports.deleteHotel = async (owner, id, isForceDelete) => {
 
   notifyUser(
     owner,
-    'Hotel removed',
-    'hotelRemoved',
-    hotel.name,
-    'BookingCloneApi',
-    `You removed your hotel: ${hotel.name}`
+    {
+      emailSubject: 'Hotel removed',
+      templateView: 'hotelRemoved.html',
+      hotelName: hotel.name,
+    },
+    {
+      smsMsg: `You removed your hotel: ${hotel.name}`
+    }
   )
 }
