@@ -9,10 +9,8 @@ function notifyUser(
   from,
   textSms
 ) {
-  console.log(user)
-  const { isSmsAllowed, email, firstName, lastName, phoneNumber } = user
-  const userFullName = `${firstName} ${lastName}`
-  sendMail(email, subjectEmail, viewEmail, userFullName, hotelName)
+  const { isSmsAllowed, email, phoneNumber } = user
+  sendMail(email, subjectEmail, viewEmail, user.fullName, hotelName)
   if (isSmsAllowed) {
     sendSms(from, phoneNumber, textSms)
   }

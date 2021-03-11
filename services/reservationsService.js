@@ -158,19 +158,20 @@ const saveReservation = async (user, data) => {
     throw new ApiError(403, 'You are not allowed to create a reservation.')
   }
 
-  const defaultErrorMessage = 'Reservation failed.'
-
   data.startDate = formatDate(data.startDate, true)
   data.endDate = formatDate(data.endDate, true)
 
-  const { hotel, room, people, startDate, endDate } = data
+  const { room, people, startDate, endDate } = data
+  const hotelId = data.hotel
 
-  if (!(await hotelExists(hotel))) {
-    throw new ApiError(404, defaultErrorMessage)
+  const hotel = await Hotel.findById(hotelId)
+
+  if (!await hotelExists(hotel)) {
+    throw new ApiError(404, 'Hotel not found')
   }
 
   if (!(await roomExists(hotel, room))) {
-    throw new ApiError(404, defaultErrorMessage)
+    throw new ApiError(404, 'Room not found')
   }
 
   if (!(await isRoomAvailable(hotel, room, startDate, endDate))) {
