@@ -42,16 +42,15 @@ exports.getFreeRooms = async (req) => {
 }
 
 exports.getHotels = async (req) => {
-  const hotelsLength = req.query.city
-    ? await Hotel.countDocuments({ 'localization.city': req.query.city })
+  const city = req.query.city ? req.query.city : null
+  const hotelsLength = city
+    ? await Hotel.countDocuments({ 'localization.city': city })
     : await Hotel.countDocuments()
 
   const pageNumber = req.query.pageNumber ? req.query.pageNumber : 1
   const pageSize = req.query.pageSize ? req.query.pageSize : DEFAULT_PAGE_SIZE
 
-  const hotels = await Hotel.find(
-    req.query.city ? { 'localization.city': req.query.city } : null
-  )
+  const hotels = await Hotel.find(city ? { 'localization.city': city } : null)
     .skip((+pageNumber - 1) * +pageSize)
     .limit(+pageSize)
 
