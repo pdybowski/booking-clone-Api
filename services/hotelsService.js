@@ -43,7 +43,7 @@ exports.getHotels = async (req) => {
   const hotelsLength = await Hotel.countDocuments()
 
   const pageNumber = req.query.pageNumber ? req.query.pageNumber : 1
-  const pageSize = req.query.pageSize ? req.query.pageSize : hotelsLength
+  const pageSize = req.query.pageSize ? req.query.pageSize : 50
 
   const hotels = await Hotel.find(
     req.query.city ? { 'localization.city': req.query.city } : null
