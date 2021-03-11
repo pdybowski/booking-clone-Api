@@ -42,7 +42,7 @@ exports.getFreeRooms = async (req) => {
 }
 
 exports.getHotels = async (req) => {
-  const city = req.query.city ? req.query.city : null
+  const { city } = req.query
   const hotelsLength = city
     ? await Hotel.countDocuments({ 'localization.city': city })
     : await Hotel.countDocuments()
