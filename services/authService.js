@@ -32,14 +32,11 @@ const register = async (data) => {
   await user.save()
 
   notifyUser(
-    user.isSmsAllowed,
-    user.email,
+    user,
     'Welcome to BookingCloneApi',
     'reg',
-    `${user.firstName} ${user.lastName}`,
     null,
     'BookingCloneApi',
-    user.phoneNumber,
     'You successfuly registered to BookingCloneApi'
   )
   return {

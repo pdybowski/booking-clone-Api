@@ -188,14 +188,11 @@ const saveReservation = async (user, data) => {
   await reservation.save()
 
   notifyUser(
-    user.isSmsAllowed,
-    user.email,
+    user,
     'Reservation booked',
     'reservation',
-    `${user.firstName} ${user.lastName}`,
     hotel.name,
     'BookingCloneApi',
-    user.phoneNumber,
     `You successfully booked your reservation at: ${hotel.name}`
   )
 
@@ -236,14 +233,11 @@ const cancelReservation = async (user, reservationId) => {
   const hotel = await Hotel.findById(reservation.hotel)
 
   notifyUser(
-    user.isSmsAllowed,
-    user.email,
+    user,
     'Cancelled reservation',
     'reservationRemoved',
-    `${user.firstName} ${user.lastName}`,
     hotel.name,
     'BookingCloneApi',
-    user.phoneNumber,
     'Your reservation has been cancelled'
   )
 

@@ -81,14 +81,11 @@ exports.deleteHotel = async (owner, id, isForceDelete) => {
     uniqueUsers.forEach(async (uniqueUser) => {
       const user = await User.findById(uniqueUser)
       notifyUser(
-        user.isSmsAllowed,
-        user.email,
+        user,
         'Reservations removed',
         'reservationRemoved',
-        `${user.firstName} ${user.lastName}`,
         hotel.name,
         'BookingCloneApi',
-        user.phoneNumber,
         'Your reservations has been cancelled'
       )
     })
@@ -98,14 +95,11 @@ exports.deleteHotel = async (owner, id, isForceDelete) => {
   await Hotel.findByIdAndDelete(id)
 
   notifyUser(
-    owner.isSmsAllowed,
-    owner.email,
+    owner,
     'Hotel removed',
     'hotelRemoved',
-    `${owner.firstName} ${owner.lastName}`,
     hotel.name,
     'BookingCloneApi',
-    owner.phoneNumber,
     `You removed your hotel: ${hotel.name}`
   )
 }

@@ -68,14 +68,11 @@ exports.deleteUsers = async (users, isForceDelete) => {
       uniqueUsers.forEach(async (uniqueUser) => {
         const user = await User.findById(uniqueUser)
         notifyUser(
-          user.isSmsAllowed,
-          user.email,
+          user,
           'Account Deleted',
           'userDeletedAndReservationsCanceled',
-          `${user.firstName} ${user.lastName}`,
           null,
           'BookingCloneApi',
-          user.phoneNumber,
           'Your account has been deleted by admin, your reservations has been cancelled'
         )
       })
@@ -88,14 +85,11 @@ exports.deleteUsers = async (users, isForceDelete) => {
     }
     await User.findByIdAndDelete(id)
     notifyUser(
-      user.isSmsAllowed,
-      user.email,
+      user,
       'Account Deleted',
       'remove',
-      `${user.firstName} ${user.lastName}`,
       null,
       'BookingCloneApi',
-      user.phoneNumber,
       'Your account has been deleted by admin'
     )
   }
@@ -113,14 +107,11 @@ exports.deleteHotel = async (hotelId, isForceDelete) => {
     reservations.forEach(async ({ user, hotel }) => {
       const { name } = await Hotel.findById(hotel)
       notifyUser(
-        user.isSmsAllowed,
-        user.email,
+        user,
         'Cancelled reservation',
         'reservationRemoved',
-        `${user.firstName} ${user.lastName}`,
         name,
         'BookingCloneApi',
-        user.phoneNumber,
         'Your reservation has been cancelled'
       )
     })
@@ -141,14 +132,11 @@ exports.verifyOwner = async (id) => {
   }
 
   notifyUser(
-    user.isSmsAllowed,
-    user.email,
+    user,
     'Veryfication successful',
     'owner',
-    `${user.firstName} ${user.lastName}`,
     null,
     'BookingCloneApi',
-    user.phoneNumber,
     'You are now veryfied as a Hotel Owner. Your hotels are now available'
   )
   return user
