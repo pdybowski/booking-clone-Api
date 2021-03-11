@@ -4,6 +4,8 @@ const Reservation = require('../models/reservation')
 const { BadRequestError, NotFoundError } = require('../helpers/apiError')
 const { formatDate } = require('../helpers/date')
 
+const DEFAULT_PAGE_SIZE = 50
+
 exports.getFreeRooms = async (req) => {
   if (!req.query.startDate || !req.query.endDate)
     throw new BadRequestError('Provide start date and end date.')
@@ -44,10 +46,8 @@ exports.getHotels = async (req) => {
     ? await Hotel.countDocuments({ 'localization.city': req.query.city })
     : await Hotel.countDocuments()
 
-  console.log(hotelsLength)
-
   const pageNumber = req.query.pageNumber ? req.query.pageNumber : 1
-  const pageSize = req.query.pageSize ? req.query.pageSize : 50
+  const pageSize = req.query.pageSize ? req.query.pageSize : DEFAULT_PAGE_SIZE
 
   const hotels = await Hotel.find(
     req.query.city ? { 'localization.city': req.query.city } : null
