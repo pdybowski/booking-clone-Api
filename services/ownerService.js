@@ -42,9 +42,9 @@ exports.addHotel = async (data) => {
   return hotel
 }
 
-exports.updateHotel = async (id, data, req) => {
+exports.updateHotel = async (id, data, userId) => {
   let hotel = await Hotel.findById(id)
-  if (!isObjIdEqualToMongoId(req.user._id, hotel.ownerId)) {
+  if (!isObjIdEqualToMongoId(userId, hotel.ownerId)) {
     throw new ApiError(403, 'Forbidden')
   }
 
@@ -78,11 +78,11 @@ exports.deleteHotel = async (ownerId, id, isForceDelete) => {
 }
 
 exports.deleteReservation = async (id, req) => {
+  let reservation = await Reservation.find({ hotel: id })
   if (!isObjIdEqualToMongoId(req.user._id, reservation.hotel)) {
     throw new ApiError(403, 'Forbidden')
   }
-
-  const reservation = await Reservation.findByIdAndDelete(id)
+  let reservation = await Reservation.findByIdAndDelete(id)
   if (!reservation) {
     throw new ApiError(404, 'Reservation with given ID was not found')
   }
