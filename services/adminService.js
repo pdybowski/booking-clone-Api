@@ -40,16 +40,6 @@ exports.deleteOwner = async (id) => {
   }
 }
 
-exports.deleteUser = async (id) => {
-  const user = await User.findOneAndDelete({
-    _id: id,
-    role: USER_ROLE,
-  })
-  if (!user) {
-    throw new BadRequestError('User not found')
-  }
-}
-
 exports.deleteUsers = async (users, isForceDelete) => {
   for (const id of users) {
     const user = await User.findById(id)

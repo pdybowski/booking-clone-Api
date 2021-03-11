@@ -27,11 +27,6 @@ router.delete('/deleteOwner/:id', async (req, res, next) => {
   adminController.deleteOwner(req, res, next)
 })
 
-// remove user
-router.delete('/deleteUser/:id', async (req, res, next) => {
-  adminController.deleteUser(req, res, next)
-})
-
 // remove many users
 // query: forceDelete
 router.post('/deleteManyUsers', async (req, res, next) => {
