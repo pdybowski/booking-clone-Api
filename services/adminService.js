@@ -30,11 +30,12 @@ exports.acceptUserToOwner = async (id) => {
 }
 
 exports.deleteOwner = async (id) => {
-  const user = await User.findOneAndDelete({
+  const hotel = await Hotel.find({ ownerId: id })
+  if (hotel) throw new BadRequestError('Remove hotel(s) first')
+  const user = await User.find({
     _id: id,
     role: HOTEL_OWNER_ROLE,
   })
-
   if (!user) {
     throw new BadRequestError('Hotel owner with provided id not found')
   }
