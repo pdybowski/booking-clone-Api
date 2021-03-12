@@ -55,7 +55,7 @@ exports.updateHotel = async (id, data, userId) => {
   }
   await Hotel.findByIdAndUpdate(id, data)
 
-  let hotelUpdate = await Hotel.findById(id)
+  hotelUpdate = await Hotel.findById(id)
 
   return hotelUpdate
 }
