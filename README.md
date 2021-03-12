@@ -12,7 +12,7 @@ It allows to register a new user.
 
 ### Request
 
-`GET /api/auth/register`
+`POST /api/auth/register`
 
 * **Body**
 
