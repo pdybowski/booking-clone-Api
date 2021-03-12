@@ -49,43 +49,41 @@ const canReservationBeCancelled = (reservation) => {
   return !reservation.isPaid && currentDate.getTime() < date.getTime()
 }
 
+const mapHotelModel = (hotel, roomId) => {
+  const room = hotel.rooms.id(roomId)
+
+  return {
+    name: hotel.name,
+    address: {
+      country: hotel.localization.country,
+      city: hotel.localization.city,
+      zipcode: hotel.localization.zipcode,
+      street: hotel.localization.street,
+      buildingNumber: hotel.localization.buildingNumber,
+    },
+    room: {
+      roomNumber: room.roomNumber,
+      price: room.price,
+      description: room.description,
+    },
+  }
+}
+
 const getUserReservations = async (user) => {
   const reservations = await Reservation.find({ user: user._id })
     .select('-user')
     .populate({
       path: 'hotel',
       select: 'name localization rooms',
-      populate: {
-        path: 'localization',
-        select: {
-          _id: 0,
-          country: 1,
-          city: 1,
-          zipcode: 1,
-          street: 1,
-          buildingNumber: 1,
-        },
-        model: Address,
-      },
     })
 
   return reservations.map((reservation) => {
-    const room = reservation.hotel.rooms.id(reservation.room)
-
     return {
       _id: reservation._id,
       startDate: reservation.startDate,
       endDate: reservation.endDate,
       people: reservation.people,
-      hotel: {
-        name: reservation.hotel.name,
-        address: reservation.hotel.localization,
-        room: {
-          roomNumber: room.roomNumber,
-          price: room.price,
-          description: room.description,
-        },
-      },
+      hotel: mapHotelModel(reservation.hotel, reservation.room),
     }
   })
 }
@@ -100,38 +98,16 @@ const getHotelOwnerReservations = async (user) => {
     .populate({
       path: 'hotel',
       select: 'name localization rooms',
-      populate: {
-        path: 'localization',
-        select: {
-          _id: 0,
-          country: 1,
-          city: 1,
-          zipcode: 1,
-          street: 1,
-          buildingNumber: 1,
-        },
-        model: Address,
-      },
     })
 
   return reservations.map((reservation) => {
-    const room = reservation.hotel.rooms.id(reservation.room)
-
     return {
       _id: reservation._id,
       isPaid: reservation.isPaid,
       startDate: reservation.startDate,
       endDate: reservation.endDate,
       people: reservation.people,
-      hotel: {
-        name: reservation.hotel.name,
-        address: reservation.hotel.localization,
-        room: {
-          roomNumber: room.roomNumber,
-          price: room.price,
-          description: room.description,
-        },
-      },
+      hotel: mapHotelModel(reservation.hotel, reservation.room),
       user: {
         email: reservation.user.email,
         firstName: reservation.user.firstName,
@@ -161,7 +137,10 @@ const saveReservation = async (user, data) => {
   data.startDate = formatDate(data.startDate, true)
   data.endDate = formatDate(data.endDate, true)
 
-  const { hotel, room, people, startDate, endDate } = data
+  const { room, people, startDate, endDate } = data
+  const hotelId = data.hotel
+
+  const hotel = await Hotel.findById(hotelId)
 
   if (!(await hotelExists(hotel))) {
     throw new BadRequestError('Hotel does not exist.')
@@ -186,15 +165,15 @@ const saveReservation = async (user, data) => {
   await reservation.save()
 
   notifyUser(
-    user.isSmsAllowed,
-    user.email,
-    'Reservation booked',
-    'reservation',
-    `${user.firstName} ${user.lastName}`,
-    hotel.name,
-    'BookingCloneApi',
-    user.phoneNumber,
-    `You successfully booked your reservation at: ${hotel.name}`
+    user,
+    {
+      emailSubject: 'Reservation booked',
+      templateView: 'reservation.html',
+      hotelName: hotel.name,
+    },
+    {
+      smsMsg: `You successfully booked your reservation at: ${hotel.name}`,
+    }
   )
 
   return true
@@ -238,15 +217,15 @@ const cancelReservation = async (user, reservationId) => {
   const hotel = await Hotel.findById(reservation.hotel)
 
   notifyUser(
-    user.isSmsAllowed,
-    user.email,
-    'Cancelled reservation',
-    'reservationRemoved',
-    `${user.firstName} ${user.lastName}`,
-    hotel.name,
-    'BookingCloneApi',
-    user.phoneNumber,
-    'Your reservation has been cancelled'
+    user,
+    {
+      emailSubject: 'Cancelled reservation',
+      templateView: 'reservationRemoved.html',
+      hotelName: hotel.name,
+    },
+    {
+      smsMsg: 'Your reservation has been cancelled'
+    }
   )
 
   return deletedReservation !== null
