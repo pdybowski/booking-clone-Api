@@ -44,19 +44,20 @@ exports.addHotel = async (data) => {
 }
 
 exports.updateHotel = async (id, data, userId) => {
-  let hotel = await Hotel.findById(id)
-  if (!isObjIdEqualToMongoId(userId, hotel.ownerId)) {
-    throw new ApiError(403, 'Forbidden')
-  }
+  let hotelUpdate = await Hotel.findById(id)
 
   if (!hotelUpdate) {
     throw new BadRequestError('Hotel not found.')
   }
+
+  if (!isObjIdEqualToMongoId(userId, hotel.ownerId)) {
+    throw new ApiError(403, 'Forbidden')
+  }
   await Hotel.findByIdAndUpdate(id, data)
 
-  let hotel = await Hotel.findById(id)
+  let hotelUpdate = await Hotel.findById(id)
 
-  return hotel
+  return hotelUpdate
 }
 
 exports.deleteHotel = async (owner, id, isForceDelete) => {
