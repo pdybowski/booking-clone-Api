@@ -10,6 +10,7 @@ const {
   BadRequestError,
 } = require('../helpers/apiError')
 const { notifyUser } = require('./notifyUser')
+const { sendMail } = require('./email')
 
 const salt = +process.env.BCRYPT_SALT || 10
 
@@ -38,7 +39,7 @@ const register = async (data) => {
   notifyUser(
     user,
     {
-      emailSubject: 'Welcome to BookingCloneApi',
+      emailSubject: 'Welcome to Booking Clone',
       templateView: 'reg.html',
     },
     {
@@ -96,7 +97,10 @@ const requestPasswordReset = async (email) => {
   const clientUrl = config.get('clientUrl')
   const link = `${clientUrl}/passwordReset?token=${resetToken}&id=${user._id}`
 
-  // TODO: send email to user with the link
+  sendMail(user.email, 'Password Reset', 'passwordReset.html', {
+    username: user.fullName,
+    link,
+  })
 
   return true
 }
@@ -123,8 +127,6 @@ const resetPassword = async (userId, token, password) => {
   )
 
   const user = await User.findById({ _id: userId })
-
-  // TODO: send email to user that password was reseted
 
   await passwordResetToken.deleteOne()
 

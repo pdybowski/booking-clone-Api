@@ -128,10 +128,10 @@ const getReservations = async (user) => {
 const saveReservation = async (user, data) => {
   if (user.isStandardUser) {
     if (!isObjIdEqualToMongoId(user._id, data.user)) {
-      throw new ForbiddenError('You are not allowed to create a reservation.')
+      throw new ForbiddenError('You are not allowed to make a reservation.')
     }
   } else {
-    throw new ForbiddenError('You are not allowed to create a reservation.')
+    throw new ForbiddenError('You are not allowed to make a reservation.')
   }
 
   data.startDate = formatDate(data.startDate, true)
@@ -169,14 +169,14 @@ const saveReservation = async (user, data) => {
     {
       emailSubject: 'Reservation booked',
       templateView: 'reservation.html',
-      hotelName: hotel.name,
+      hotel: hotel.name,
     },
     {
       smsMsg: `You successfully booked your reservation at: ${hotel.name}`,
     }
   )
 
-  return true
+  return { reservationId: reservation.id }
 }
 
 const cancelReservation = async (user, reservationId) => {
@@ -221,10 +221,10 @@ const cancelReservation = async (user, reservationId) => {
     {
       emailSubject: 'Cancelled reservation',
       templateView: 'reservationRemoved.html',
-      hotelName: hotel.name,
+      hotel: hotel.name,
     },
     {
-      smsMsg: 'Your reservation has been cancelled'
+      smsMsg: 'Your reservation has been cancelled',
     }
   )
 
