@@ -123,7 +123,7 @@ It allows user to log in.
       }
       ```
 
-## Reset user password
+## Request resetting user password
 
 It sends user an email with the link to reset his/her password.
 
@@ -168,6 +168,61 @@ It sends user an email with the link to reset his/her password.
       ```
 
       or
+
+      Body:
+      ```
+      {
+          "message": "[Data validation error message]"
+      }
+      ```
+
+## Reset user password
+
+It allows user to reset his/her password.
+
+### Request
+
+`POST /api/auth/resetPassword`
+
+* **Body**
+
+    ```
+    {
+        "userId": "[user identifier]",
+        "token": "[valid JWT token]",
+        "password": "[user new password in plain text]",
+    }
+    ```
+
+    Required fields: 
+
+    userId, token, password
+  
+### Response
+
+* **Success Response:**
+  
+    Status Code: 200 OK
+
+    Body: 
+    ```
+    {
+        "success": true
+    }
+    ```
+
+* **Error Response:**
+  
+  * Status Code: 401 Unauthorized
+
+      Body:
+      ```
+      {
+          "message": "Invalid or expired password reset token."
+      }
+      ```
+
+  * Status Code: 400 Bad Request
 
       Body:
       ```

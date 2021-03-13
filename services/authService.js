@@ -42,7 +42,7 @@ const register = async (data) => {
       templateView: 'reg.html',
     },
     {
-      smsMsg: 'You successfuly registered to BookingCloneApi'
+      smsMsg: 'You successfuly registered to BookingCloneApi',
     }
   )
 
@@ -105,13 +105,13 @@ const resetPassword = async (userId, token, password) => {
   let passwordResetToken = await Token.findOne({ userId })
 
   if (!passwordResetToken) {
-    throw new BadRequestError('Invalid or expired password reset token.')
+    throw new UnauthorizedError('Invalid or expired password reset token.')
   }
 
   const isValid = await bcrypt.compare(token, passwordResetToken.token)
 
   if (!isValid) {
-    throw new BadRequestError('Invalid or expired password reset token.')
+    throw new UnauthorizedError('Invalid or expired password reset token.')
   }
 
   const hash = await bcrypt.hash(password, Number(salt))
