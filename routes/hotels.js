@@ -3,7 +3,7 @@ const hotelController = require('../controllers/hotelsController')
 const router = express.Router()
 const hotelsController = require('../controllers/hotelsController')
 
-// query: pageNumber | pageSize | city | adults | children | startDate | endDate
+// query: pageNumber | pageSize | city | adults | children | startDate | endDate | isFree
 router.get('', async (req, res, next) => {
   hotelController.getHotels(req, res, next)
 })
