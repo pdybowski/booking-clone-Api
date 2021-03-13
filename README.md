@@ -287,6 +287,108 @@ It returns data about logged in user.
     }
     ```
 
+<!-- RESERVATIONS -->
+
+## Get reservations
+
+It returns logged in user all hotel reservations.
+
+### Request
+
+`GET /api/reservations`
+
+- **Body**
+
+  No body data required.
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body for standard user:
+
+  ```
+  [
+      {
+          "_id": "[reservation identifier]",
+          "startDate": "[reservation start date]",
+          "endDate": "[reservation end date]",
+          "people": {
+              "adults": [number of adults],
+              "children": [number of children]
+          },
+          "hotel": {
+              "name": "[name of the hotel]",
+              "address": {
+                  "country": "[country in which the hotel is located]",
+                  "city": "[city where the hotel is located]",
+                  "zipcode": "[postal code where the hotel is located]",
+                  "street": "[street the hotel is located on]",
+                  "buildingNumber": [number of the building where hotel is located]
+              },
+              "room": {
+                  "roomNumber": "[room number]",
+                  "price": [price of the room for one night],
+                  "description": "[room description]"
+              }
+          }
+      },
+      ...
+  ]
+  ```
+
+    Body for hotel owner:
+
+    ```
+    [
+        {
+            "_id": "[reservation identifier]",
+            "isPaid: [true|false],
+            "startDate": "[reservation start date]",
+            "endDate": "[reservation end date]",
+            "people": {
+                "adults": [number of adults],
+                "children": [number of children]
+            },
+            "hotel": {
+                "name": "[name of the hotel]",
+                "address": {
+                    "country": "[country in which the hotel is located]",
+                    "city": "[city where the hotel is located]",
+                    "zipcode": "[postal code where the hotel is located]",
+                    "street": "[street the hotel is located on]",
+                    "buildingNumber": [number of the building where hotel is located]
+                },
+                "room": {
+                    "roomNumber": "[room number]",
+                    "price": [price of the room for one night],
+                    "description": "[room description]"
+                }
+            },
+            "user": {
+                "email": "[email of the user who booked the room]",
+                "firstName": "[first name of the user who booked the room]",
+                "lastName": "[last name of the user who booked the room]"
+            }
+        },
+        ...
+    ]
+    ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Invalid token."
+    }
+    ```
+
 <!-- ADMIN -->
 
 ## Get all users
