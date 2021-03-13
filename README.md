@@ -14,59 +14,62 @@ It allows to register a new user.
 
 `POST /api/auth/register`
 
-* **Body**
+- **Body**
 
-    ```
-    {
-        "email": "[valid user email address]",
-        "password": "[user password in plain text]",
-        "repeatPassword": "[repeated user password in plain text]",
-        "firstName": "[user first name]",
-        "lastName": "[user last name]",
-        "role": "[role of the user (user | hotelOwner)]",
-        "isSmsAllowed": [true|false],
-        "phoneNumber": "[user phone number]",
-        "tin": "[tax identification number of the hotel owner]"
-    }
-    ```
+  ```
+  {
+      "email": "[valid user email address]",
+      "password": "[user password in plain text]",
+      "repeatPassword": "[repeated user password in plain text]",
+      "firstName": "[user first name]",
+      "lastName": "[user last name]",
+      "role": "[role of the user (user | hotelOwner)]",
+      "isSmsAllowed": [true|false],
+      "phoneNumber": "[user phone number]",
+      "tin": "[tax identification number of the hotel owner]"
+  }
+  ```
 
-    Required fields: 
+  Required fields:
 
-    email, password, repeatPassword, firstName, lastName, role, isSmsAllowed
-  
+  email, password, repeatPassword, firstName, lastName, role, isSmsAllowed
+
 ### Response
 
-* **Success Response:**
-  
-    Status Code: 200 OK
+- **Success Response:**
 
-    Body: 
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  {
+      "userId": "[user identifier]",
+      "token": "[JWT Token]"
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 409 Conflict
+
+    Body:
+
     ```
     {
-        "userId": "[user identifier]",
-        "token": "[JWT Token]"
+        "message": "Account with this email address already exists."
     }
     ```
 
-* **Error Response:**
-  
-  * Status Code: 409 Conflict
+  - Status Code: 400 Bad Request
 
-      Body:
-      ```
-      {
-          "message": "Account with this email address already exists."
-      }
-      ```
+    Body:
 
-  * Status Code: 400 Bad Request
-
-      Body:
-      ```
-      {
-          "message": "[Data validation error message]"
-      }
-      ```
+    ```
+    {
+        "message": "[Data validation error message]"
+    }
+    ```
 
 ## User login
 
@@ -76,52 +79,55 @@ It allows user to log in.
 
 `POST /api/auth/login`
 
-* **Body**
+- **Body**
 
-    ```
-    {
-        "email": "[valid user email address]",
-        "password": "[user password in plain text]",
-    }
-    ```
+  ```
+  {
+      "email": "[valid user email address]",
+      "password": "[user password in plain text]",
+  }
+  ```
 
-    Required fields: 
+  Required fields:
 
-    email, password
-  
+  email, password
+
 ### Response
 
-* **Success Response:**
-  
-    Status Code: 200 OK
+- **Success Response:**
 
-    Body: 
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  {
+      "userId": "[user identifier]",
+      "token": "[JWT Token]"
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
     ```
     {
-        "userId": "[user identifier]",
-        "token": "[JWT Token]"
+        "message": "Email or password is wrong."
     }
     ```
 
-* **Error Response:**
-  
-  * Status Code: 401 Unauthorized
+  - Status Code: 400 Bad Request
 
-      Body:
-      ```
-      {
-          "message": "Email or password is wrong."
-      }
-      ```
+    Body:
 
-  * Status Code: 400 Bad Request
-
-      Body:
-      ```
-      {
-          "message": "[Data validation error message]"
-      }
-      ```
+    ```
+    {
+        "message": "[Data validation error message]"
+    }
+    ```
 
 ## Request resetting user password
 
@@ -131,50 +137,53 @@ It sends user an email with the link to reset his/her password.
 
 `POST /api/auth/requestPasswordReset`
 
-* **Body**
+- **Body**
 
-    ```
-    {
-        "email": "[valid user email address]",
-    }
-    ```
+  ```
+  {
+      "email": "[valid user email address]",
+  }
+  ```
 
-    Required fields: 
+  Required fields:
 
-    email
-  
+  email
+
 ### Response
 
-* **Success Response:**
-  
-    Status Code: 200 OK
+- **Success Response:**
 
-    Body: 
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  {
+      "success": true
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 400 Bad Request
+
+    Body:
+
     ```
     {
-        "success": true
+        "message": "User does not exists."
     }
     ```
 
-* **Error Response:**
+    or
 
-  * Status Code: 400 Bad Request
+    Body:
 
-      Body:
-      ```
-      {
-          "message": "User does not exists."
-      }
-      ```
-
-      or
-
-      Body:
-      ```
-      {
-          "message": "[Data validation error message]"
-      }
-      ```
+    ```
+    {
+        "message": "[Data validation error message]"
+    }
+    ```
 
 ## Reset user password
 
@@ -184,49 +193,432 @@ It allows user to reset his/her password.
 
 `POST /api/auth/resetPassword`
 
-* **Body**
+- **Body**
 
-    ```
-    {
-        "userId": "[user identifier]",
-        "token": "[valid JWT token]",
-        "password": "[user new password in plain text]",
-    }
-    ```
+  ```
+  {
+      "userId": "[user identifier]",
+      "token": "[valid JWT token]",
+      "password": "[user new password in plain text]",
+  }
+  ```
 
-    Required fields: 
+  Required fields:
 
-    userId, token, password
-  
+  userId, token, password
+
 ### Response
 
-* **Success Response:**
-  
-    Status Code: 200 OK
+- **Success Response:**
 
-    Body: 
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  {
+      "success": true
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
     ```
     {
-        "success": true
+        "message": "Invalid or expired password reset token."
     }
     ```
 
-* **Error Response:**
-  
-  * Status Code: 401 Unauthorized
+  - Status Code: 400 Bad Request
 
-      Body:
-      ```
+    Body:
+
+    ```
+    {
+        "message": "[Data validation error message]"
+    }
+    ```
+
+<!-- ADMIN -->
+
+## Get all users
+
+It allows the administrator to get all users
+
+### Request
+
+`GET /api/admin/users`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  [
       {
-          "message": "Invalid or expired password reset token."
+          "isVerified": [true|false],
+          "role": "[role of the user (user | hotelOwner)]",
+          "_id": "[user identifier]",
+          "email": "[user email address]"
+          "password": "[user password]",
+          "firstName": "[user first name]",
+          "lastName": "[user last name]",
+          "phoneNumber": "[user phone number]",
+          "tin": "[tax identification number of the hotel owner]"
+          "isSmsAllowed": [true|false],
       }
-      ```
+  ]
+  ```
 
-  * Status Code: 400 Bad Request
+- **Error Response:**
 
-      Body:
-      ```
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Forbidden"
+    }
+    ```
+
+## Get all hotel owners
+
+It allows the administrator to get all hotel owners
+
+### Request
+
+`GET /api/admin/hotelOwner`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  [
       {
-          "message": "[Data validation error message]"
+          "isVerified": [true|false],
+          "role": "[role of the user (user | hotelOwner)]",
+          "_id": "[user identifier]",
+          "email": "[user email address]"
+          "password": "[user password]",
+          "firstName": "[user first name]",
+          "lastName": "[user last name]",
+          "phoneNumber": "[user phone number]",
+          "tin": "[tax identification number of the hotel owner]"
+          "isSmsAllowed": [true|false],
       }
-      ```
+  ]
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Forbidden"
+    }
+    ```
+
+## Change user role to hotel owner
+
+It allows the administrator to change user role
+
+### Request
+
+`PUT /api/admin/acceotUserToHotelOwner/:id`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied"
+    }
+    ```
+
+## Verify hotel owner
+
+It allows the administrator to verify hotel owner
+
+### Request
+
+`PUT /api/admin/verifyHotelOwner/:id`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied"
+    }
+    ```
+
+## Remove hotel owner
+
+It allows the administrator to remove hotel owner
+
+### Request
+
+`DELETE /api/admin/hotelOwner/:id`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+- **Error Response:**
+
+  - Status Code: 400 Bad Request
+
+  Body:
+
+  ```
+  {
+      "message": "Remove hotel(s) first"
+  }
+  ```
+
+  or
+
+  Body:
+
+  ```
+  {
+      "message": "Hotel owner with provided id not found"
+  }
+  ```
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied"
+    }
+    ```
+
+## Remove useres
+
+It allows the administrator to remove users
+
+### Request
+
+`DELETE /api/admin/users`
+
+- **Body**
+
+  ```
+  [
+      user identifier,
+  ]
+  ```
+
+  **Query**
+
+  It allows to remove a user even if they have any reservation.
+
+  `forceDelete = true`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+- **Error Response:**
+
+  - Status Code: 400 Bad Request
+
+  Body:
+
+  ```
+  {
+      "message": "User not found"
+  }
+  ```
+
+  or
+
+  Body:
+
+  ```
+  {
+      "message": "Remove reservations first"
+  }
+  ```
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied"
+    }
+    ```
+
+## Remove hotels
+
+It allows the administrator to remove users
+
+### Request
+
+`DELETE /api/admin/hotels/:id`
+
+**Query**
+
+    It allows to remove a hotel even if they have any reservation.
+
+`forceDelete = true`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+- **Error Response:**
+
+  - Status Code: 400 Bad Request
+
+  Body:
+
+  ```
+  {
+      "message": "Hotel not found"
+  }
+  ```
+
+  or
+
+  Body:
+
+  ```
+  {
+      "message": "Remove reservations first"
+  }
+  ```
+
+  Body:
+
+  ```
+  {
+      "message": "Hotel owner not found"
+  }
+  ```
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied"
+    }
+    ```
