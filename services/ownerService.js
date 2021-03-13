@@ -7,7 +7,7 @@ const { isObjIdEqualToMongoId } = require('../helpers/isObjIdEqualToMongoId')
 const { notifyUser } = require('./notifyUser')
 
 exports.addRoom = async (req) => {
-  const { id: hotelId } = req.params.id
+  const { id: hotelId } = req.params
   let hotel = await Hotel.findOne({ _id: hotelId })
   if (!hotel) throw new BadRequestError('Hotel with provided ID was not found.')
   if (!isObjIdEqualToMongoId(req.user._id, hotel.ownerId))
@@ -44,15 +44,21 @@ exports.addHotel = async (data) => {
   return hotel
 }
 
-exports.updateHotel = async (id, data) => {
-  const hotelUpdate = await Hotel.findByIdAndUpdate(id, data)
+exports.updateHotel = async (id, data, userId) => {
+  let hotelUpdate = await Hotel.findById(id)
 
   if (!hotelUpdate) {
     throw new BadRequestError('Hotel not found.')
   }
-  const hotel = await Hotel.findById(id)
 
-  return hotel
+  if (!isObjIdEqualToMongoId(userId, hotelUpdate.ownerId)) {
+    throw new ForbiddenError('Forbidden')
+  }
+  await Hotel.findByIdAndUpdate(id, data)
+
+  hotelUpdate = await Hotel.findById(id)
+
+  return hotelUpdate
 }
 
 exports.deleteHotel = async (owner, id, isForceDelete) => {
