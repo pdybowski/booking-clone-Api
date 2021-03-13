@@ -243,6 +243,50 @@ It allows user to reset his/her password.
     }
     ```
 
+## Get user info
+
+It returns data about logged in user.
+
+### Request
+
+`GET /api/user/me`
+
+- **Body**
+
+  No body data required.
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  {
+      "isVerified": [true|false],
+      "role": "[user role (user | hotelOwner)]",
+      "_id": "[user identifier]",
+      "email": "[user email]",
+      "firstName": "[user first name]",
+      "lastName": "[user last name]",
+      "isSmsAllowed": [true|false]
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Invalid token."
+    }
+    ```
+
 <!-- ADMIN -->
 
 ## Get all users
