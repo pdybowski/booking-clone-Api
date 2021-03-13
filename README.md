@@ -122,3 +122,56 @@ It allows user to log in.
           "message": "[Data validation error message]"
       }
       ```
+
+## Reset user password
+
+It sends user an email with the link to reset his/her password.
+
+### Request
+
+`POST /api/auth/requestPasswordReset`
+
+* **Body**
+
+    ```
+    {
+        "email": "[valid user email address]",
+    }
+    ```
+
+    Required fields: 
+
+    email
+  
+### Response
+
+* **Success Response:**
+  
+    Status Code: 200 OK
+
+    Body: 
+    ```
+    {
+        "success": true
+    }
+    ```
+
+* **Error Response:**
+
+  * Status Code: 400 Bad Request
+
+      Body:
+      ```
+      {
+          "message": "User does not exists."
+      }
+      ```
+
+      or
+
+      Body:
+      ```
+      {
+          "message": "[Data validation error message]"
+      }
+      ```
