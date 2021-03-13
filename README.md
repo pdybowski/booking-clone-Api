@@ -67,3 +67,58 @@ It allows to register a new user.
           "message": "[Data validation error message]"
       }
       ```
+
+## User login
+
+It allows user to log in.
+
+### Request
+
+`POST /api/auth/login`
+
+* **Body**
+
+    ```
+    {
+        "email": "[valid user email address]",
+        "password": "[user password in plain text]",
+    }
+    ```
+
+    Required fields: 
+
+    email, password
+  
+### Response
+
+* **Success Response:**
+  
+    Status Code: 200 OK
+
+    Body: 
+    ```
+    {
+        "userId": "[user identifier]",
+        "token": "[JWT Token]"
+    }
+    ```
+
+* **Error Response:**
+  
+  * Status Code: 401 Unauthorized
+
+      Body:
+      ```
+      {
+          "message": "Email or password is wrong."
+      }
+      ```
+
+  * Status Code: 400 Bad Request
+
+      Body:
+      ```
+      {
+          "message": "[Data validation error message]"
+      }
+      ```
