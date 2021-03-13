@@ -107,6 +107,8 @@ It allows user to log in.
   }
   ```
 
+  The JWT token is also returned in response headers as `X-Auth-Token`. This token must be sent in every future requests where user need to be authenticated.
+  
 - **Error Response:**
 
   - Status Code: 401 Unauthorized
