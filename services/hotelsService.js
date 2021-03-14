@@ -1,10 +1,13 @@
 const { Hotel } = require('../models/hotel')
-const isRoomAvailable = require('../helpers/isRoomAvailable')
-
-const { BadRequestError, NotFoundError } = require('../helpers/apiError')
+const { NotFoundError } = require('../helpers/apiError')
 const { formatDate } = require('../helpers/date')
+const Reservation = require('../models/reservation')
 
 const DEFAULT_PAGE_SIZE = 50
+
+const filterRooms = (hotel, adults, children) => {
+  return hotel.rooms.filter(r => r.beds.single + r.beds.double * 2 >= parseInt(adults) + parseInt(children))
+}
 
 const isHotelAvailable = async (hotelId, startDate, endDate, adults, children) => {
   const hotel = await Hotel.findOne({ _id: hotelId })
@@ -13,21 +16,45 @@ const isHotelAvailable = async (hotelId, startDate, endDate, adults, children) =
     throw new NotFoundError('Hotel not found.')
   }
 
-  const rooms = hotel.rooms.filter(r => r.beds.single + r.beds.double * 2 >= parseInt(adults) + parseInt(children))
-
-  if(rooms.length == 0) return false
+  const rooms = filterRooms(hotel, adults, children)
 
   let isAvailable = false
-  for(r of rooms) {
-    isAvailable = await isRoomAvailable(hotelId, r._id, formatDate(startDate, true), endDate)
+  for(let room of rooms) {
+    isAvailable = await isRoomAvailable(hotelId, room._id, formatDate(startDate, true), endDate)
     if(isAvailable) break 
   }
 
   return isAvailable
 }
 
+const isRoomAvailable = async (hotelId, roomId, startDate, endDate) => {
+  return !(await Reservation.exists({
+    hotel: hotelId,
+    room: roomId,
+    $or: [
+      // start after startDate and after before endDate --- |
+      {
+        startDate: { $lt: startDate, $lt: endDate },
+        endDate: { $gt: startDate, $lt: endDate },
+      },
+      // between some reservation time
+      {
+        startDate: { $lte: startDate, $lte: endDate },
+        endDate: { $gte: startDate, $gte: endDate },
+      },
+      // start before startDate and end before endDate | ---
+      {
+        startDate: { $gt: startDate, $lt: endDate },
+        endDate: { $gt: startDate, $lt: endDate },
+      },
+    ],
+  }))
+}
+
+exports.isRoomAvailable = isRoomAvailable;
+
 exports.getHotels = async (req) => {
-  const { city, isFree, adults, children, startDate, endDate } = req.query
+  const { city, adults, children, startDate, endDate } = req.query
   let { pageNumber, pageSize } = req.query
 
   const hotelsLength = city
@@ -41,22 +68,17 @@ exports.getHotels = async (req) => {
     .skip((+pageNumber - 1) * +pageSize)
     .limit(+pageSize)
 
-  if(isFree) {
-    if(startDate && endDate && city) {
+  if(startDate && endDate) {
+    const freeHotels = []
 
-      const freeHotels = []
-
-      for(let i = 0; i < hotels.length; i++) {
-        const isAvailable = await isHotelAvailable(hotels[i]._id, formatDate(startDate, true), formatDate(endDate, true), adults, children)
-        if(isAvailable) {
-          freeHotels.push({ id: hotels[i]._id, name: hotels[i].name, description: hotels[i].description, clientsRates: hotels[i].clientsRates })
-        }
+    for(let hotel of hotels) {
+      const isAvailable = await isHotelAvailable(hotel._id, formatDate(startDate, true), formatDate(endDate, true), adults, children)
+      if(isAvailable) {
+        freeHotels.push({ id: hotel._id, name: hotel.name, description: hotel.description, clientsRates: hotel.clientsRates })
       }
-
-      return { freeHotels, pages: Math.ceil(hotelsLength / pageSize) }
-    } else {
-      throw new BadRequestError('Provide start date, end date and city.')
     }
+
+    return { freeHotels, pages: Math.ceil(freeHotels.length / pageSize) }
   }
 
   return { hotels, pages: Math.ceil(hotelsLength / pageSize) }
@@ -122,13 +144,13 @@ exports.getAvailableHotelRooms = async (req) => {
     throw new NotFoundError('Hotel not found.')
   }
 
-  const rooms = hotel.rooms.filter(r => r.beds.single + r.beds.double * 2 >= parseInt(adults) + parseInt(children))
+  const rooms = filterRooms(hotel, adults, children)
 
   const freeRooms = []
 
-  for(r of rooms) {
-    if(await isRoomAvailable(hotelId, r._id, formatDate(startDate, true), formatDate(endDate, true))) {
-      freeRooms.push(r)
+  for(let room of rooms) {
+    if(await isRoomAvailable(hotelId, room._id, formatDate(startDate, true), formatDate(endDate, true))) {
+      freeRooms.push(room)
     }
   }
 

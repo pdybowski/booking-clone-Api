@@ -9,14 +9,12 @@ const {
 } = require('./hotelsService')
 const { Hotel } = require('../models/hotel')
 const { addDaysToDate, formatDate } = require('../helpers/date')
-const isRoomAvailable = require('../helpers/isRoomAvailable')
+const { isRoomAvailable } = require('./hotelsService')
 const { ForbiddenError, BadRequestError } = require('../helpers/apiError')
 const { isObjIdEqualToMongoId } = require('../helpers/isObjIdEqualToMongoId')
 const { notifyUser } = require('./notifyUser')
 
 const CANCELLATION_DATE = 3
-
-
 
 const canReservationBeCancelled = (reservation) => {
   const date = addDaysToDate(
@@ -225,7 +223,6 @@ const updatePayment = async (id) => {
 module.exports = {
   getReservations,
   saveReservation,
-  isRoomAvailable,
   cancelReservation,
   updatePayment,
 }
