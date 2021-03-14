@@ -391,6 +391,198 @@ It returns logged in user all hotel reservations.
     }
     ```
 
+## Make a room reservation
+
+It allows user to book a room in the hotel.
+
+### Request
+
+`POST /api/reservations`
+
+- **Body**
+
+  ```
+  {
+      "user": "[user identifier]",
+      "hotel": "[hotel identifier]",
+      "room": "[room identifier]",
+      "startDate": "[reservation start date]",
+      "endDate": "[reservation end date]",
+      "people": {
+          "adults": [number of adults in the room],
+          "children": [number of children in the room]
+      }
+  }
+  ```
+
+  Required fields:
+
+  user, hotel, room, startDate, endDate, people
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  ```
+  {
+      "reservationId": "[reservation identifier]"
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Invalid token."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "You are not allowed to make a reservation."
+    }
+    ```
+
+  - Status Code: 400 Bad Request
+
+    Body:
+
+    ```
+    {
+        "message": "The room is not available."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "Hotel does not exist."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "Room does not exist"
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "Exceeded number of visitors."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "[Data validation error message]"
+    }
+    ```
+
+## Cancel a room reservation
+
+It allows user to cancel a room reservation in the hotel.
+
+### Request
+
+`DELETE /api/reservations/:id`
+
+- **Body**
+
+  No body data required.
+
+- **Params**
+  
+  `:id` - reservation identifier
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  ```
+  {
+      "success": true
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Invalid token."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "You are not allowed to cancel this reservation."
+    }
+    ```
+
+  - Status Code: 400 Bad Request
+
+    Body:
+
+    ```
+    {
+        "message": "Reservation not found."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "An error occurred while checking hotel owner."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "The reservation cannot be cancelled."
+    }
+    ```
+
 ## Get all hotels for hotel owner <!-- OWNER -->
 
 It allows the hotel owner to get all his hotels
