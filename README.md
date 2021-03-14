@@ -108,7 +108,7 @@ It allows user to log in.
   ```
 
   The JWT token is also returned in response headers as `X-Auth-Token`. This token must be sent in every future requests where user need to be authenticated.
-  
+
 - **Error Response:**
 
   - Status Code: 401 Unauthorized
@@ -341,43 +341,43 @@ It returns logged in user all hotel reservations.
   ]
   ```
 
-    Body for hotel owner:
+  Body for hotel owner:
 
-    ```
-    [
-        {
-            "_id": "[reservation identifier]",
-            "isPaid: [true|false],
-            "startDate": "[reservation start date]",
-            "endDate": "[reservation end date]",
-            "people": {
-                "adults": [number of adults],
-                "children": [number of children]
-            },
-            "hotel": {
-                "name": "[name of the hotel]",
-                "address": {
-                    "country": "[country in which the hotel is located]",
-                    "city": "[city where the hotel is located]",
-                    "zipcode": "[postal code where the hotel is located]",
-                    "street": "[street the hotel is located on]",
-                    "buildingNumber": [number of the building where hotel is located]
-                },
-                "room": {
-                    "roomNumber": "[room number]",
-                    "price": [price of the room for one night],
-                    "description": "[room description]"
-                }
-            },
-            "user": {
-                "email": "[email of the user who booked the room]",
-                "firstName": "[first name of the user who booked the room]",
-                "lastName": "[last name of the user who booked the room]"
-            }
-        },
-        ...
-    ]
-    ```
+  ```
+  [
+      {
+          "_id": "[reservation identifier]",
+          "isPaid: [true|false],
+          "startDate": "[reservation start date]",
+          "endDate": "[reservation end date]",
+          "people": {
+              "adults": [number of adults],
+              "children": [number of children]
+          },
+          "hotel": {
+              "name": "[name of the hotel]",
+              "address": {
+                  "country": "[country in which the hotel is located]",
+                  "city": "[city where the hotel is located]",
+                  "zipcode": "[postal code where the hotel is located]",
+                  "street": "[street the hotel is located on]",
+                  "buildingNumber": [number of the building where hotel is located]
+              },
+              "room": {
+                  "roomNumber": "[room number]",
+                  "price": [price of the room for one night],
+                  "description": "[room description]"
+              }
+          },
+          "user": {
+              "email": "[email of the user who booked the room]",
+              "firstName": "[first name of the user who booked the room]",
+              "lastName": "[last name of the user who booked the room]"
+          }
+      },
+      ...
+  ]
+  ```
 
 - **Error Response:**
 
@@ -391,9 +391,85 @@ It returns logged in user all hotel reservations.
     }
     ```
 
-<!-- ADMIN -->
+## Get all hotels for hotel owner <!-- OWNER -->
 
-## Get all users
+It allows the hotel owner to get all his hotels
+
+### Request
+
+`GET /api/hotelOwner/hotels`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  [
+    {
+      "description": "[hotel description]",
+      "_id": "[hotel identifier]",
+      "localization": {
+        "_id": "[localization identifier]",
+        "city": "[localization city]",
+        "country": "[localization country]",
+        "zipcode": "[localization zipcode]",
+        "street": "[localization street]",
+        "buildingNumber": [localization building number]
+      },
+      "phoneNumber": "[hotel phone number]",
+      "name": "[hotel name]",
+      "email": "[hotel email]",
+      "rooms": [
+        {
+          "description": "[room description]",
+          "_id": "[room identifier]",
+          "roomNumber": "[room nuber]",
+          "price": [room price]
+        }
+      ],
+      "ownerId": "[hotel owner identifier]",
+      "clientsRates": [hotel clients rates]
+    }
+  ]
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "User is not verified."
+    }
+    ```
+
+## Get all users <!-- ADMIN -->
 
 It allows the administrator to get all users
 
@@ -631,7 +707,7 @@ It allows the administrator to remove hotel owner
     }
     ```
 
-## Remove useres
+## Remove users
 
 It allows the administrator to remove users
 
