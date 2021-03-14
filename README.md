@@ -575,6 +575,102 @@ It allows the hotel owner to add new hotel
     }
     ```
 
+## Update hotel <!-- OWNER -->
+
+It allows the hotel owner to update hotel
+
+### Request
+
+`PUT /api/hotelOwner/hotels/:id`
+
+- **Body**
+
+  ```
+  {
+      "[hotel fields]": "[new value]"
+  }
+  ```
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  [
+    {
+      "description": "[hotel description]",
+      "_id": "[hotel identifier]",
+      "localization": {
+        "_id": "[localization identifier]",
+        "city": "[localization city]",
+        "country": "[localization country]",
+        "zipcode": "[localization zipcode]",
+        "street": "[localization street]",
+        "buildingNumber": [localization building number]
+      },
+      "phoneNumber": "[hotel phone number]",
+      "name": "[hotel name]",
+      "email": "[hotel email]",
+      "rooms": [
+        {
+          "description": "[room description]",
+          "_id": "[room identifier]",
+          "roomNumber": "[room nuber]",
+          "price": [room price]
+        }
+      ],
+      "ownerId": "[hotel owner identifier]",
+      "clientsRates": [hotel clients rates]
+    }
+  ]
+  ```
+
+- **Error Response:**
+
+  - Status Code: 400 Bad Request
+
+  Body:
+
+  ```
+  {
+      "message": "Hotel not found."
+  }
+  ```
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "User is not verified."
+    }
+    ```
+
 ## Get all users <!-- ADMIN -->
 
 It allows the administrator to get all users
@@ -691,7 +787,7 @@ It allows the administrator to change user role
 
 ### Request
 
-`PUT /api/admin/acceotUserToHotelOwner/:id`
+`PUT /api/admin/acceptUserToHotelOwner/:id`
 
 ### Response
 
