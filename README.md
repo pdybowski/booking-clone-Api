@@ -469,6 +469,112 @@ It allows the hotel owner to get all his hotels
     }
     ```
 
+## Add new hotel <!-- OWNER -->
+
+It allows the hotel owner to add new hotel
+
+### Request
+
+`POST /api/hotelOwner/hotels`
+
+- **Body**
+
+  ```
+  {
+      "name": "[hotel name]",
+      "description": "[hotel description]",
+      "localization": {
+        "city": "[localization city]",
+        "country": "[localization country]",
+        "zipcode": "[localization zipcode]",
+        "street": "[localization street]",
+        "buildingNumber": [localization building number]
+      },
+      "email": "[hotel email]",
+      "rooms": [
+        {
+          "description": "[room description]",
+          "roomNumber": "[room nuber]",
+          "price": [room price]
+        }
+      ],
+  }
+  ```
+
+  Required fields:
+
+  all localization fields, phoneNumber, name, email, roomNumber, price
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```
+  [
+    {
+      "description": "[hotel description]",
+      "_id": "[hotel identifier]",
+      "localization": {
+        "_id": "[localization identifier]",
+        "city": "[localization city]",
+        "country": "[localization country]",
+        "zipcode": "[localization zipcode]",
+        "street": "[localization street]",
+        "buildingNumber": [localization building number]
+      },
+      "phoneNumber": "[hotel phone number]",
+      "name": "[hotel name]",
+      "email": "[hotel email]",
+      "rooms": [
+        {
+          "description": "[room description]",
+          "_id": "[room identifier]",
+          "roomNumber": "[room nuber]",
+          "price": [room price]
+        }
+      ],
+      "ownerId": "[hotel owner identifier]",
+      "clientsRates": [hotel clients rates]
+    }
+  ]
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "User is not verified."
+    }
+    ```
+
 ## Get all users <!-- ADMIN -->
 
 It allows the administrator to get all users
