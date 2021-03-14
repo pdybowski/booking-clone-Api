@@ -428,11 +428,15 @@ It allows the hotel owner to get all his hotels
           "description": "[room description]",
           "_id": "[room identifier]",
           "roomNumber": "[room nuber]",
-          "price": [room price]
+          "price": [room price],
+          "createdAt": "[created date]",
+          "updatedAt": "[updated date]"
         }
       ],
       "ownerId": "[hotel owner identifier]",
-      "clientsRates": [hotel clients rates]
+      "clientsRates": [hotel clients rates],
+      "createdAt": "[created date]",
+      "updatedAt": "[updated date]"
     }
   ]
   ```
@@ -534,11 +538,15 @@ It allows the hotel owner to add new hotel
           "description": "[room description]",
           "_id": "[room identifier]",
           "roomNumber": "[room nuber]",
-          "price": [room price]
+          "price": [room price],
+          "createdAt": "[created date]",
+          "updatedAt": "[updated date]"
         }
       ],
       "ownerId": "[hotel owner identifier]",
-      "clientsRates": [hotel clients rates]
+      "clientsRates": [hotel clients rates],
+      "createdAt": "[created date]",
+      "updatedAt": "[updated date]"
     }
   ]
   ```
@@ -587,7 +595,7 @@ It allows the hotel owner to update hotel
 
   ```
   {
-      "[hotel fields]": "[new value]"
+      "[hotel field]": "[new value]"
   }
   ```
 
@@ -597,7 +605,7 @@ It allows the hotel owner to update hotel
 
   Status Code: 200 OK
 
-  Body:
+- Body:
 
   ```
   [
@@ -620,11 +628,15 @@ It allows the hotel owner to update hotel
           "description": "[room description]",
           "_id": "[room identifier]",
           "roomNumber": "[room nuber]",
-          "price": [room price]
+          "price": [room price],
+          "createdAt": "[created date]",
+          "updatedAt": "[updated date]"
         }
       ],
       "ownerId": "[hotel owner identifier]",
-      "clientsRates": [hotel clients rates]
+      "clientsRates": [hotel clients rates],
+      "createdAt": "[created date]",
+      "updatedAt": "[updated date]"
     }
   ]
   ```
@@ -679,15 +691,15 @@ It allows the hotel owner to delet hotel
 
 `DELETE /api/hotelOwner/hotels/:id`
 
-**Query**
+- **Query**
 
-It allows to remove a hotel even if they have any reservation.
+  It allows to remove a hotel even if they have any reservation.
+
+  `forceDelete = true`
 
 - **Body**
 
   No body data required.
-
-`forceDelete = true`
 
 ### Response
 
@@ -704,6 +716,116 @@ It allows to remove a hotel even if they have any reservation.
     ```
     {
         "message": "Remove reservations first or check `force delete` flag"
+    }
+    ```
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Forbidden"
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "User is not verified."
+    }
+    ```
+
+## Add room to a hotel <!-- OWNER -->
+
+It allows the hotel owner to add room to a hotel
+
+### Request
+
+`POST /api/hotelOwner/hotels/:id/addRoom`
+
+- **Body**
+
+  ```
+  [
+    {
+      "description": "[room description]",
+      "roomNumber": [room number]",
+      "beds": {
+        "single": "[single beds number]",
+        "double": "[double beds number]"
+      },
+      "price": "[price]"
+    }
+  ]
+  ```
+
+  Required fields:
+
+  roomNumber, beds, single, double, price
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  ```
+  [
+    {
+      "description": "[hotel description]",
+      "_id": "[hotel identifier]",
+      "localization": {
+        "_id": "[localization identifier]",
+        "city": "[localization city]",
+        "country": "[localization country]",
+        "zipcode": "[localization zipcode]",
+        "street": "[localization street]",
+        "buildingNumber": [localization building number]
+      },
+      "phoneNumber": "[hotel phone number]",
+      "name": "[hotel name]",
+      "email": "[hotel email]",
+      "rooms": [
+        {
+          "description": "[room description]",
+          "_id": "[room identifier]",
+          "roomNumber": "[room nuber]",
+          "price": [room price],
+          "createdAt": "[created date]",
+          "updatedAt": "[updated date]"
+        }
+      ],
+      "ownerId": "[hotel owner identifier]",
+      "clientsRates": [hotel clients rates],
+      "createdAt": "[created date]",
+      "updatedAt": "[updated date]"
+    }
+  ]
+  ```
+
+- **Error Response:**
+
+  - Status Code: 400 Bad Request
+
+    Body:
+
+    ```
+    {
+        "message": "Hotel with provided ID was not found."
     }
     ```
 
@@ -957,23 +1079,23 @@ It allows the administrator to remove hotel owner
 
   - Status Code: 400 Bad Request
 
-  Body:
+    Body:
 
-  ```
-  {
-      "message": "Remove hotel(s) first"
-  }
-  ```
+    ```
+    {
+        "message": "Remove hotel(s) first"
+    }
+    ```
 
-  or
+    or
 
-  Body:
+    Body:
 
-  ```
-  {
-      "message": "Hotel owner with provided id not found"
-  }
-  ```
+    ```
+    {
+        "message": "Hotel owner with provided id not found"
+    }
+    ```
 
   - Status Code: 401 Unauthorized
 
@@ -1003,11 +1125,11 @@ It allows the administrator to remove users
 
 `DELETE /api/admin/users`
 
-**Query**
+- **Query**
 
-It allows to remove a user even if they have any reservation.
+  It allows to remove a user even if they have any reservation.
 
-`forceDelete = true`
+  `forceDelete = true`
 
 - **Body**
 
@@ -1027,23 +1149,23 @@ It allows to remove a user even if they have any reservation.
 
   - Status Code: 400 Bad Request
 
-  Body:
+    Body:
 
-  ```
-  {
-      "message": "User not found"
-  }
-  ```
+    ```
+    {
+        "message": "User not found"
+    }
+    ```
 
-  or
+    or
 
-  Body:
+    Body:
 
-  ```
-  {
-      "message": "Remove reservations first"
-  }
-  ```
+    ```
+    {
+        "message": "Remove reservations first"
+    }
+    ```
 
   - Status Code: 401 Unauthorized
 
@@ -1073,11 +1195,11 @@ It allows the administrator to remove users
 
 `DELETE /api/admin/hotels/:id`
 
-**Query**
+- **Query**
 
-It allows to remove a hotel even if they have any reservation.
+  It allows to remove a hotel even if they have any reservation.
 
-`forceDelete = true`
+  `forceDelete = true`
 
 - **Body**
 
@@ -1093,31 +1215,23 @@ It allows to remove a hotel even if they have any reservation.
 
   - Status Code: 400 Bad Request
 
-  Body:
+    Body:
 
-  ```
-  {
-      "message": "Hotel not found"
-  }
-  ```
+    ```
+    {
+        "message": "Hotel not found"
+    }
+    ```
 
-  or
+    or
 
-  Body:
+    Body:
 
-  ```
-  {
-      "message": "Remove reservations first"
-  }
-  ```
-
-  Body:
-
-  ```
-  {
-      "message": "Hotel owner not found"
-  }
-  ```
+    ```
+    {
+        "message": "Remove reservations first"
+    }
+    ```
 
   - Status Code: 401 Unauthorized
 
