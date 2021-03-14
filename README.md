@@ -633,13 +633,13 @@ It allows the hotel owner to update hotel
 
   - Status Code: 400 Bad Request
 
-  Body:
+    Body:
 
-  ```
-  {
-      "message": "Hotel not found."
-  }
-  ```
+    ```
+    {
+        "message": "Hotel not found."
+    }
+    ```
 
   - Status Code: 401 Unauthorized
 
@@ -671,6 +671,72 @@ It allows the hotel owner to update hotel
     }
     ```
 
+## Delete hotel <!-- OWNER -->
+
+It allows the hotel owner to delet hotel
+
+### Request
+
+`DELETE /api/hotelOwner/hotels/:id`
+
+**Query**
+
+It allows to remove a hotel even if they have any reservation.
+
+- **Body**
+
+  No body data required.
+
+`forceDelete = true`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+- **Error Response:**
+
+  - Status Code: 400 Bad Request
+
+    Body:
+
+    ```
+    {
+        "message": "Remove reservations first or check `force delete` flag"
+    }
+    ```
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```
+    {
+        "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```
+    {
+        "message": "Forbidden"
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```
+    {
+        "message": "User is not verified."
+    }
+    ```
+
 ## Get all users <!-- ADMIN -->
 
 It allows the administrator to get all users
@@ -678,6 +744,10 @@ It allows the administrator to get all users
 ### Request
 
 `GET /api/admin/users`
+
+- **Body**
+
+  No body data required.
 
 ### Response
 
@@ -734,6 +804,10 @@ It allows the administrator to get all hotel owners
 
 `GET /api/admin/hotelOwner`
 
+- **Body**
+
+  No body data required.
+
 ### Response
 
 - **Success Response:**
@@ -789,6 +863,10 @@ It allows the administrator to change user role
 
 `PUT /api/admin/acceptUserToHotelOwner/:id`
 
+- **Body**
+
+  No body data required.
+
 ### Response
 
 - **Success Response:**
@@ -825,6 +903,10 @@ It allows the administrator to verify hotel owner
 
 `PUT /api/admin/verifyHotelOwner/:id`
 
+- **Body**
+
+  No body data required.
+
 ### Response
 
 - **Success Response:**
@@ -860,6 +942,10 @@ It allows the administrator to remove hotel owner
 ### Request
 
 `DELETE /api/admin/hotelOwner/:id`
+
+- **Body**
+
+  No body data required.
 
 ### Response
 
@@ -917,19 +1003,19 @@ It allows the administrator to remove users
 
 `DELETE /api/admin/users`
 
+**Query**
+
+It allows to remove a user even if they have any reservation.
+
+`forceDelete = true`
+
 - **Body**
 
   ```
   [
-      user identifier,
+      "user identifier",
   ]
   ```
-
-  **Query**
-
-  It allows to remove a user even if they have any reservation.
-
-  `forceDelete = true`
 
 ### Response
 
@@ -989,9 +1075,13 @@ It allows the administrator to remove users
 
 **Query**
 
-    It allows to remove a hotel even if they have any reservation.
+It allows to remove a hotel even if they have any reservation.
 
 `forceDelete = true`
+
+- **Body**
+
+  No body data required.
 
 ### Response
 
