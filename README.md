@@ -1051,6 +1051,96 @@ It allows the hotel owner to add room to a hotel
     }
     ```
 
+## Get all hotels <!-- HOTELS -->
+
+It allows to get all hotels
+
+### Request
+
+`GET /api/hotels/`
+
+- **Query**
+
+  It allows to remove a hotel even if they have any reservation.
+
+  `pageNumber = [ page number ]`
+  `pageSize = [ page size `
+  `city = [ "page number" ]`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```javascript
+  [
+    {
+      "description": "[hotel description]",
+      "_id": "[hotel identifier]",
+      "localization": {
+        "_id": "[localization identifier]",
+        "city": "[localization city]",
+        "country": "[localization country]",
+        "zipcode": "[localization zipcode]",
+        "street": "[localization street]",
+        "buildingNumber": [localization building number]
+      },
+      "phoneNumber": "[hotel phone number]",
+      "name": "[hotel name]",
+      "email": "[hotel email]",
+      "rooms": [
+        {
+          "description": "[room description]",
+          "_id": "[room identifier]",
+          "roomNumber": "[room nuber]",
+          "price": [room price],
+          "createdAt": "[created date]",
+          "updatedAt": "[updated date]"
+        }
+      ],
+      "ownerId": "[hotel owner identifier]",
+      "clientsRates": [hotel clients rates],
+      "createdAt": "[created date]",
+      "updatedAt": "[updated date]"
+    }
+  ]
+  ```
+
+- **Error Response:**
+
+  - Status Code: 401 Unauthorized
+
+    Body:
+
+    ```javascript
+    {
+      "message": "Access denied."
+    }
+    ```
+
+  - Status Code: 403 Forbidden
+
+    Body:
+
+    ```javascript
+    {
+      "message": "Access denied."
+    }
+    ```
+
+    or
+
+    Body:
+
+    ```javascript
+    {
+      "message": "User is not verified."
+    }
+    ```
+
 ## Get all users <!-- ADMIN -->
 
 It allows the administrator to get all users
