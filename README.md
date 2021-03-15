@@ -347,7 +347,7 @@ It returns logged in user all hotel reservations.
   [
       {
           "_id": "[reservation identifier]",
-          "isPaid: [true|false],
+          "isPaid": [true | false],
           "startDate": "[reservation start date]",
           "endDate": "[reservation end date]",
           "people": {
@@ -1074,7 +1074,7 @@ It allows the administrator to get all users
   ```javascript
   [
       {
-          "isVerified": [true|false],
+          "isVerified": [true | false],
           "role": "[role of the user (user | hotelOwner)]",
           "_id": "[user identifier]",
           "email": "[user email address]"
@@ -1083,7 +1083,7 @@ It allows the administrator to get all users
           "lastName": "[user last name]",
           "phoneNumber": "[user phone number]",
           "tin": "[tax identification number of the hotel owner]"
-          "isSmsAllowed": [true|false],
+          "isSmsAllowed": [true | false],
       }
   ]
   ```
@@ -1133,7 +1133,7 @@ It allows the administrator to get all hotel owners
   ```javascript
   [
       {
-          "isVerified": [true|false],
+          "isVerified": [true | false],
           "role": "[role of the user (user | hotelOwner)]",
           "_id": "[user identifier]",
           "email": "[user email address]"
