@@ -16,17 +16,17 @@ It allows to register a new user.
 
 - **Body**
 
-  ```
+  ```json
   {
-      "email": "[valid user email address]",
-      "password": "[user password in plain text]",
-      "repeatPassword": "[repeated user password in plain text]",
-      "firstName": "[user first name]",
-      "lastName": "[user last name]",
-      "role": "[role of the user (user | hotelOwner)]",
-      "isSmsAllowed": [true|false],
-      "phoneNumber": "[user phone number]",
-      "tin": "[tax identification number of the hotel owner]"
+    "email": "[valid user email address]",
+    "password": "[user password in plain text]",
+    "repeatPassword": "[repeated user password in plain text]",
+    "firstName": "[user first name]",
+    "lastName": "[user last name]",
+    "role": "[role of the user (user | hotelOwner)]",
+    "isSmsAllowed": [true | false],
+    "phoneNumber": "[user phone number]",
+    "tin": "[tax identification number of the hotel owner]"
   }
   ```
 
@@ -42,10 +42,10 @@ It allows to register a new user.
 
   Body:
 
-  ```
+  ```json
   {
-      "userId": "[user identifier]",
-      "token": "[JWT Token]"
+    "userId": "[user identifier]",
+    "token": "[JWT Token]"
   }
   ```
 
@@ -55,9 +55,9 @@ It allows to register a new user.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Account with this email address already exists."
+      "message": "Account with this email address already exists."
     }
     ```
 
@@ -65,9 +65,9 @@ It allows to register a new user.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "[Data validation error message]"
+      "message": "[Data validation error message]"
     }
     ```
 
@@ -81,10 +81,10 @@ It allows user to log in.
 
 - **Body**
 
-  ```
+  ```json
   {
-      "email": "[valid user email address]",
-      "password": "[user password in plain text]",
+    "email": "[valid user email address]",
+    "password": "[user password in plain text]"
   }
   ```
 
@@ -100,10 +100,10 @@ It allows user to log in.
 
   Body:
 
-  ```
+  ```json
   {
-      "userId": "[user identifier]",
-      "token": "[JWT Token]"
+    "userId": "[user identifier]",
+    "token": "[JWT Token]"
   }
   ```
 
@@ -115,9 +115,9 @@ It allows user to log in.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Email or password is wrong."
+      "message": "Email or password is wrong."
     }
     ```
 
@@ -125,9 +125,9 @@ It allows user to log in.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "[Data validation error message]"
+      "message": "[Data validation error message]"
     }
     ```
 
@@ -141,9 +141,9 @@ It sends user an email with the link to reset his/her password.
 
 - **Body**
 
-  ```
+  ```json
   {
-      "email": "[valid user email address]",
+    "email": "[valid user email address]"
   }
   ```
 
@@ -159,9 +159,9 @@ It sends user an email with the link to reset his/her password.
 
   Body:
 
-  ```
+  ```json
   {
-      "success": true
+    "success": true
   }
   ```
 
@@ -171,9 +171,9 @@ It sends user an email with the link to reset his/her password.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "User does not exists."
+      "message": "User does not exists."
     }
     ```
 
@@ -181,9 +181,9 @@ It sends user an email with the link to reset his/her password.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "[Data validation error message]"
+      "message": "[Data validation error message]"
     }
     ```
 
@@ -197,11 +197,11 @@ It allows user to reset his/her password.
 
 - **Body**
 
-  ```
+  ```json
   {
-      "userId": "[user identifier]",
-      "token": "[valid JWT token]",
-      "password": "[user new password in plain text]",
+    "userId": "[user identifier]",
+    "token": "[valid JWT token]",
+    "password": "[user new password in plain text]"
   }
   ```
 
@@ -217,9 +217,9 @@ It allows user to reset his/her password.
 
   Body:
 
-  ```
+  ```json
   {
-      "success": true
+    "success": true
   }
   ```
 
@@ -229,9 +229,9 @@ It allows user to reset his/her password.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Invalid or expired password reset token."
+      "message": "Invalid or expired password reset token."
     }
     ```
 
@@ -239,9 +239,9 @@ It allows user to reset his/her password.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "[Data validation error message]"
+      "message": "[Data validation error message]"
     }
     ```
 
@@ -265,15 +265,15 @@ It returns data about logged in user.
 
   Body:
 
-  ```
+  ```json
   {
-      "isVerified": [true|false],
-      "role": "[user role (user | hotelOwner)]",
-      "_id": "[user identifier]",
-      "email": "[user email]",
-      "firstName": "[user first name]",
-      "lastName": "[user last name]",
-      "isSmsAllowed": [true|false]
+    "isVerified": [true | false],
+    "role": "[user role (user | hotelOwner)]",
+    "_id": "[user identifier]",
+    "email": "[user email]",
+    "firstName": "[user first name]",
+    "lastName": "[user last name]",
+    "isSmsAllowed": [true | false]
   }
   ```
 
@@ -311,7 +311,7 @@ It returns logged in user all hotel reservations.
 
   Body for standard user:
 
-  ```
+  ```json
   [
       {
           "_id": "[reservation identifier]",
@@ -343,7 +343,7 @@ It returns logged in user all hotel reservations.
 
   Body for hotel owner:
 
-  ```
+  ```json
   [
       {
           "_id": "[reservation identifier]",
@@ -385,9 +385,9 @@ It returns logged in user all hotel reservations.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Invalid token."
+      "message": "Invalid token."
     }
     ```
 
@@ -401,7 +401,7 @@ It allows user to book a room in the hotel.
 
 - **Body**
 
-  ```
+  ```json
   {
       "user": "[user identifier]",
       "hotel": "[hotel identifier]",
@@ -425,9 +425,9 @@ It allows user to book a room in the hotel.
 
   Status Code: 200 OK
 
-  ```
+  ```json
   {
-      "reservationId": "[reservation identifier]"
+    "reservationId": "[reservation identifier]"
   }
   ```
 
@@ -437,9 +437,9 @@ It allows user to book a room in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Invalid token."
+      "message": "Invalid token."
     }
     ```
 
@@ -447,9 +447,9 @@ It allows user to book a room in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "You are not allowed to make a reservation."
+      "message": "You are not allowed to make a reservation."
     }
     ```
 
@@ -457,9 +457,9 @@ It allows user to book a room in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "The room is not available."
+      "message": "The room is not available."
     }
     ```
 
@@ -467,9 +467,9 @@ It allows user to book a room in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Hotel does not exist."
+      "message": "Hotel does not exist."
     }
     ```
 
@@ -477,9 +477,9 @@ It allows user to book a room in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Room does not exist"
+      "message": "Room does not exist"
     }
     ```
 
@@ -487,9 +487,9 @@ It allows user to book a room in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Exceeded number of visitors."
+      "message": "Exceeded number of visitors."
     }
     ```
 
@@ -497,9 +497,9 @@ It allows user to book a room in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "[Data validation error message]"
+      "message": "[Data validation error message]"
     }
     ```
 
@@ -516,7 +516,7 @@ It allows user to cancel a room reservation in the hotel.
   No body data required.
 
 - **Params**
-  
+
   `:id` - reservation identifier
 
 ### Response
@@ -525,9 +525,9 @@ It allows user to cancel a room reservation in the hotel.
 
   Status Code: 200 OK
 
-  ```
+  ```json
   {
-      "success": true
+    "success": true
   }
   ```
 
@@ -537,9 +537,9 @@ It allows user to cancel a room reservation in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Invalid token."
+      "message": "Invalid token."
     }
     ```
 
@@ -547,9 +547,9 @@ It allows user to cancel a room reservation in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "You are not allowed to cancel this reservation."
+      "message": "You are not allowed to cancel this reservation."
     }
     ```
 
@@ -557,9 +557,9 @@ It allows user to cancel a room reservation in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Reservation not found."
+      "message": "Reservation not found."
     }
     ```
 
@@ -567,9 +567,9 @@ It allows user to cancel a room reservation in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "An error occurred while checking hotel owner."
+      "message": "An error occurred while checking hotel owner."
     }
     ```
 
@@ -577,9 +577,9 @@ It allows user to cancel a room reservation in the hotel.
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "The reservation cannot be cancelled."
+      "message": "The reservation cannot be cancelled."
     }
     ```
 
@@ -599,7 +599,7 @@ It allows the hotel owner to get all his hotels
 
   Body:
 
-  ```
+  ```json
   [
     {
       "description": "[hotel description]",
@@ -639,9 +639,9 @@ It allows the hotel owner to get all his hotels
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -649,9 +649,9 @@ It allows the hotel owner to get all his hotels
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -659,9 +659,9 @@ It allows the hotel owner to get all his hotels
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "User is not verified."
+      "message": "User is not verified."
     }
     ```
 
@@ -675,7 +675,7 @@ It allows the hotel owner to add new hotel
 
 - **Body**
 
-  ```
+  ```json
   {
       "name": "[hotel name]",
       "description": "[hotel description]",
@@ -709,7 +709,7 @@ It allows the hotel owner to add new hotel
 
   Body:
 
-  ```
+  ```json
   [
     {
       "description": "[hotel description]",
@@ -749,9 +749,9 @@ It allows the hotel owner to add new hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -759,9 +759,9 @@ It allows the hotel owner to add new hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -769,9 +769,9 @@ It allows the hotel owner to add new hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "User is not verified."
+      "message": "User is not verified."
     }
     ```
 
@@ -785,9 +785,9 @@ It allows the hotel owner to update hotel
 
 - **Body**
 
-  ```
+  ```json
   {
-      "[hotel field]": "[new value]"
+    "[hotel field]": "[new value]"
   }
   ```
 
@@ -799,7 +799,7 @@ It allows the hotel owner to update hotel
 
 - Body:
 
-  ```
+  ```json
   [
     {
       "description": "[hotel description]",
@@ -839,9 +839,9 @@ It allows the hotel owner to update hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Hotel not found."
+      "message": "Hotel not found."
     }
     ```
 
@@ -849,9 +849,9 @@ It allows the hotel owner to update hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -859,9 +859,9 @@ It allows the hotel owner to update hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -869,9 +869,9 @@ It allows the hotel owner to update hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "User is not verified."
+      "message": "User is not verified."
     }
     ```
 
@@ -905,9 +905,9 @@ It allows the hotel owner to delet hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Remove reservations first or check `force delete` flag"
+      "message": "Remove reservations first or check `force delete` flag"
     }
     ```
 
@@ -915,9 +915,9 @@ It allows the hotel owner to delet hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -925,9 +925,9 @@ It allows the hotel owner to delet hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Forbidden"
+      "message": "Forbidden"
     }
     ```
 
@@ -935,9 +935,9 @@ It allows the hotel owner to delet hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "User is not verified."
+      "message": "User is not verified."
     }
     ```
 
@@ -951,7 +951,7 @@ It allows the hotel owner to add room to a hotel
 
 - **Body**
 
-  ```
+  ```json
   [
     {
       "description": "[room description]",
@@ -975,7 +975,7 @@ It allows the hotel owner to add room to a hotel
 
   Status Code: 200 OK
 
-  ```
+  ```json
   [
     {
       "description": "[hotel description]",
@@ -1015,9 +1015,9 @@ It allows the hotel owner to add room to a hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Hotel with provided ID was not found."
+      "message": "Hotel with provided ID was not found."
     }
     ```
 
@@ -1025,9 +1025,9 @@ It allows the hotel owner to add room to a hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1035,9 +1035,9 @@ It allows the hotel owner to add room to a hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Forbidden"
+      "message": "Forbidden"
     }
     ```
 
@@ -1045,9 +1045,9 @@ It allows the hotel owner to add room to a hotel
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "User is not verified."
+      "message": "User is not verified."
     }
     ```
 
@@ -1071,7 +1071,7 @@ It allows the administrator to get all users
 
   Body:
 
-  ```
+  ```json
   [
       {
           "isVerified": [true|false],
@@ -1094,9 +1094,9 @@ It allows the administrator to get all users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1104,9 +1104,9 @@ It allows the administrator to get all users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Forbidden"
+      "message": "Forbidden"
     }
     ```
 
@@ -1130,7 +1130,7 @@ It allows the administrator to get all hotel owners
 
   Body:
 
-  ```
+  ```json
   [
       {
           "isVerified": [true|false],
@@ -1153,9 +1153,9 @@ It allows the administrator to get all hotel owners
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1163,9 +1163,9 @@ It allows the administrator to get all hotel owners
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Forbidden"
+      "message": "Forbidden"
     }
     ```
 
@@ -1193,9 +1193,9 @@ It allows the administrator to change user role
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1203,9 +1203,9 @@ It allows the administrator to change user role
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied"
+      "message": "Access denied"
     }
     ```
 
@@ -1233,9 +1233,9 @@ It allows the administrator to verify hotel owner
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1243,9 +1243,9 @@ It allows the administrator to verify hotel owner
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied"
+      "message": "Access denied"
     }
     ```
 
@@ -1273,9 +1273,9 @@ It allows the administrator to remove hotel owner
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Remove hotel(s) first"
+      "message": "Remove hotel(s) first"
     }
     ```
 
@@ -1283,9 +1283,9 @@ It allows the administrator to remove hotel owner
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Hotel owner with provided id not found"
+      "message": "Hotel owner with provided id not found"
     }
     ```
 
@@ -1293,9 +1293,9 @@ It allows the administrator to remove hotel owner
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1303,9 +1303,9 @@ It allows the administrator to remove hotel owner
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied"
+      "message": "Access denied"
     }
     ```
 
@@ -1325,10 +1325,8 @@ It allows the administrator to remove users
 
 - **Body**
 
-  ```
-  [
-      "user identifier",
-  ]
+  ```json
+  ["user identifier"]
   ```
 
 ### Response
@@ -1343,9 +1341,9 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "User not found"
+      "message": "User not found"
     }
     ```
 
@@ -1353,9 +1351,9 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Remove reservations first"
+      "message": "Remove reservations first"
     }
     ```
 
@@ -1363,9 +1361,9 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1373,9 +1371,9 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied"
+      "message": "Access denied"
     }
     ```
 
@@ -1409,9 +1407,9 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Hotel not found"
+      "message": "Hotel not found"
     }
     ```
 
@@ -1419,9 +1417,9 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Remove reservations first"
+      "message": "Remove reservations first"
     }
     ```
 
@@ -1429,9 +1427,9 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied."
+      "message": "Access denied."
     }
     ```
 
@@ -1439,8 +1437,8 @@ It allows the administrator to remove users
 
     Body:
 
-    ```
+    ```json
     {
-        "message": "Access denied"
+      "message": "Access denied"
     }
     ```
