@@ -620,6 +620,10 @@ It allows the hotel owner to get all his hotels
           "description": "[room description]",
           "_id": "[room identifier]",
           "roomNumber": "[room nuber]",
+          "beds": {
+            "single": "[single beds number]",
+            "double": "[double beds number]"
+        },
           "price": [room price],
           "createdAt": "[created date]",
           "updatedAt": "[updated date]"
@@ -691,6 +695,10 @@ It allows the hotel owner to add new hotel
         {
           "description": "[room description]",
           "roomNumber": "[room nuber]",
+          "beds": {
+            "single": "[single beds number]",
+            "double": "[double beds number]"
+          },
           "price": [room price]
         }
       ],
@@ -699,7 +707,7 @@ It allows the hotel owner to add new hotel
 
   Required fields:
 
-  all localization fields, phoneNumber, name, email, roomNumber, price
+  all localization fields, phoneNumber, name, email, roomNumber, beds, price
 
 ### Response
 
@@ -730,6 +738,10 @@ It allows the hotel owner to add new hotel
           "description": "[room description]",
           "_id": "[room identifier]",
           "roomNumber": "[room nuber]",
+          "beds": {
+            "single": "[single beds number]",
+            "double": "[double beds number]"
+          },
           "price": [room price],
           "createdAt": "[created date]",
           "updatedAt": "[updated date]"
@@ -820,6 +832,10 @@ It allows the hotel owner to update hotel
           "description": "[room description]",
           "_id": "[room identifier]",
           "roomNumber": "[room nuber]",
+            "beds": {
+              "single": "[single beds number]",
+              "double": "[double beds number]"
+          },
           "price": [room price],
           "createdAt": "[created date]",
           "updatedAt": "[updated date]"
@@ -996,6 +1012,10 @@ It allows the hotel owner to add room to a hotel
           "description": "[room description]",
           "_id": "[room identifier]",
           "roomNumber": "[room nuber]",
+          "beds": {
+            "single": "[single beds number]",
+            "double": "[double beds number]"
+          },
           "price": [room price],
           "createdAt": "[created date]",
           "updatedAt": "[updated date]"
@@ -1057,15 +1077,78 @@ It allows to get all hotels
 
 ### Request
 
-`GET /api/hotels/`
+`GET /api/hotels`
 
 - **Query**
-
-  It allows to remove a hotel even if they have any reservation.
 
   `pageNumber = [ page number ]`
   `pageSize = [ page size `
   `city = [ "page number" ]`
+  `adults = [ "adults number" ]`
+  `children = [ "children number" ]`
+  `startDate = [ "start date" ]`
+  `endDate = [ "end date" ]`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```javascript
+  {
+    "hotels":[
+        {
+        "description": "[hotel description]",
+        "_id": "[hotel identifier]",
+        "localization": {
+            "_id": "[localization identifier]",
+            "city": "[localization city]",
+            "country": "[localization country]",
+            "zipcode": "[localization zipcode]",
+            "street": "[localization street]",
+            "buildingNumber": [localization building number]
+        },
+        "phoneNumber": "[hotel phone number]",
+        "name": "[hotel name]",
+        "email": "[hotel email]",
+        "rooms": [
+            {
+            "description": "[room description]",
+            "_id": "[room identifier]",
+            "roomNumber": "[room nuber]",
+            "beds": {
+              "single": "[single beds number]",
+              "double": "[double beds number]"
+            },
+            "price": [room price],
+            "createdAt": "[created date]",
+            "updatedAt": "[updated date]"
+            }
+        ],
+        "ownerId": "[hotel owner identifier]",
+        "clientsRates": [hotel clients rates],
+        "createdAt": "[created date]",
+        "updatedAt": "[updated date]"
+        }
+    ],
+    "pages": [pages number]
+  }
+  ```
+
+- **Error Response:**
+
+  No error
+
+## Get limited amount hotels <!-- HOTELS -->
+
+It allows to get limited amount hotels
+
+### Request
+
+`GET /api/hotels/getLimitedHotels/:limit`
 
 ### Response
 
@@ -1077,67 +1160,159 @@ It allows to get all hotels
 
   ```javascript
   [
-    {
+      {
       "description": "[hotel description]",
       "_id": "[hotel identifier]",
       "localization": {
+          "_id": "[localization identifier]",
+          "city": "[localization city]",
+          "country": "[localization country]",
+          "zipcode": "[localization zipcode]",
+          "street": "[localization street]",
+          "buildingNumber": [localization building number]
+      },
+      "phoneNumber": "[hotel phone number]",
+      "name": "[hotel name]",
+      "email": "[hotel email]",
+      "rooms": [
+          {
+          "description": "[room description]",
+          "_id": "[room identifier]",
+          "roomNumber": "[room nuber]",
+          "beds": {
+            "single": "[single beds number]",
+            "double": "[double beds number]"
+          },
+          "price": [room price],
+          "createdAt": "[created date]",
+          "updatedAt": "[updated date]"
+          }
+      ],
+      "ownerId": "[hotel owner identifier]",
+      "clientsRates": [hotel clients rates],
+      "createdAt": "[created date]",
+      "updatedAt": "[updated date]"
+      }
+  ]
+  ```
+
+- **Error Response:**
+
+  No error
+
+## Get hotel by id <!-- HOTELS -->
+
+It allows to get hotel by id
+
+### Request
+
+`GET /api/hotels/:id`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```javascript
+  {
+    "description": "[hotel description]",
+    "_id": "[hotel identifier]",
+    "localization": {
         "_id": "[localization identifier]",
         "city": "[localization city]",
         "country": "[localization country]",
         "zipcode": "[localization zipcode]",
         "street": "[localization street]",
         "buildingNumber": [localization building number]
-      },
-      "phoneNumber": "[hotel phone number]",
-      "name": "[hotel name]",
-      "email": "[hotel email]",
-      "rooms": [
+    },
+    "phoneNumber": "[hotel phone number]",
+    "name": "[hotel name]",
+    "email": "[hotel email]",
+    "rooms": [
         {
-          "description": "[room description]",
-          "_id": "[room identifier]",
-          "roomNumber": "[room nuber]",
-          "price": [room price],
-          "createdAt": "[created date]",
-          "updatedAt": "[updated date]"
+        "description": "[room description]",
+        "_id": "[room identifier]",
+        "roomNumber": "[room nuber]",
+        "beds": {
+            "single": "[single beds number]",
+            "double": "[double beds number]"
+        },
+        "price": [room price],
+        "createdAt": "[created date]",
+        "updatedAt": "[updated date]"
         }
-      ],
-      "ownerId": "[hotel owner identifier]",
-      "clientsRates": [hotel clients rates],
+    ],
+    "ownerId": "[hotel owner identifier]",
+    "clientsRates": [hotel clients rates],
+    "createdAt": "[created date]",
+    "updatedAt": "[updated date]"
+  }
+  ```
+
+- **Error Response:**
+
+  - Status Code: 404 Not found
+
+    Body:
+
+    ```javascript
+    {
+      "message": "Hotel not found."
+    }
+    ```
+
+## Get available hotel rooms <!-- HOTELS -->
+
+It allows to get available hotel rooms
+
+### Request
+
+`GET /api/hotels/:id/availableRooms`
+
+- **Query**
+
+  `startDate = [ "start date" ]`
+  `endDate = [ "end date" ]`
+  `adults = [ "adults number" ]`
+  `children = [ "children number" ]`
+
+### Response
+
+- **Success Response:**
+
+  Status Code: 200 OK
+
+  Body:
+
+  ```javascript
+  [
+      {
+      "description": "[room description]",
+      "_id": "[room identifier]",
+      "roomNumber": "[room nuber]",
+      "beds": {
+        "single": "[single beds number]",
+        "double": "[double beds number]"
+      },
+      "price": [room price],
       "createdAt": "[created date]",
       "updatedAt": "[updated date]"
-    }
+      }
   ]
   ```
 
 - **Error Response:**
 
-  - Status Code: 401 Unauthorized
+  - Status Code: 404 Not found
 
     Body:
 
     ```javascript
     {
-      "message": "Access denied."
-    }
-    ```
-
-  - Status Code: 403 Forbidden
-
-    Body:
-
-    ```javascript
-    {
-      "message": "Access denied."
-    }
-    ```
-
-    or
-
-    Body:
-
-    ```javascript
-    {
-      "message": "User is not verified."
+      "message": "Hotel not found."
     }
     ```
 
