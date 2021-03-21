@@ -94,14 +94,19 @@ exports.getHotels = async (req) => {
         children
       )
       if (isAvailable) {
-        freeHotels.push(hotel)
+        freeHotels.push({
+          id: hotel._id,
+          name: hotel.name,
+          description: hotel.description,
+          clientsRates: hotel.clientsRates,
+        })
       }
     }
 
     return { freeHotels, pages: Math.ceil(freeHotels.length / pageSize) }
   }
 
-  return { freeHotels: hotels, pages: Math.ceil(hotelsLength / pageSize) }
+  return { hotels, pages: Math.ceil(hotelsLength / pageSize) }
 }
 
 exports.getHotel = async (hotelId) => {
