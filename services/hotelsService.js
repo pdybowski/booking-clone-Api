@@ -103,7 +103,10 @@ exports.getHotels = async (req) => {
       }
     }
 
-    return { freeHotels, pages: Math.ceil(freeHotels.length / pageSize) }
+    return {
+      hotels: freeHotels,
+      pages: Math.ceil(freeHotels.length / pageSize),
+    }
   }
 
   return { hotels, pages: Math.ceil(hotelsLength / pageSize) }
