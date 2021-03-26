@@ -1,5 +1,5 @@
 {
-  "jwtPrivateKey": "",
+  "jwtPrivateKey": "12345",
   "clientUrl": "",
   "database": {
     "host": "localhost",
