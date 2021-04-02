@@ -82,27 +82,27 @@ exports.getHotels = async (req) => {
     .skip((+pageNumber - 1) * +pageSize)
     .limit(+pageSize)
 
-  if (startDate && endDate) {
-    const freeHotels = []
+  // if (startDate && endDate) {
+  //   const freeHotels = []
 
-    for (let hotel of hotels) {
-      const isAvailable = await isHotelAvailable(
-        hotel._id,
-        formatDate(startDate, true),
-        formatDate(endDate, true),
-        adults,
-        children
-      )
-      if (isAvailable) {
-        freeHotels.push(hotel)
-      }
-    }
+  //   for (let hotel of hotels) {
+  //     const isAvailable = await isHotelAvailable(
+  //       hotel._id,
+  //       formatDate(startDate, true),
+  //       formatDate(endDate, true),
+  //       adults,
+  //       children
+  //     )
+  //     if (isAvailable) {
+  //       freeHotels.push(hotel)
+  //     }
+  //   }
 
-    return {
-      hotels: freeHotels,
-      pages: Math.ceil(freeHotels.length / pageSize),
-    }
-  }
+  //   return {
+  //     hotels: freeHotels,
+  //     pages: Math.ceil(freeHotels.length / pageSize),
+  //   }
+  // }
 
   return { hotels, pages: Math.ceil(hotelsLength / pageSize) }
 }
